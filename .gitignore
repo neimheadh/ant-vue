@@ -1,0 +1,11 @@
+#< Node vendors
+/node_modules
+#> Node vendors
+
+#< PHPStorm IDE files
+/.idea
+#> PHPStorm IDE files
+
+#< Nuxt generated files
+/.nuxt
+#> Nuxt generated files

@@ -1,0 +1,18 @@
+#!/bin/bash
+set -e
+DIR=$(dirname "$(realpath "$BASH_SOURCE")")
+
+cd "$DIR/.."
+
+# Generate environment file.
+if [ ! -f .env ]; then
+  cp .env.dist .env
+  echo "GID=$(id -g)" >> .env
+  echo "UID=$(id -u)" >> .env
+fi
+
+# Build docker images
+docker-compose build
+
+# Run project
+bin/start

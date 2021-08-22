@@ -1,0 +1,24 @@
+version: "3.5"
+
+networks:
+  reverse-proxy:
+    external: true
+
+services:
+  ant-vue:
+    build:
+      context: ./docker/ant-vue
+      args:
+        FROM_IMAGE: ${DOCKER_IMAGE_NODE}
+        GID: ${GID}
+        UID: ${UID}
+        USERNAME: ${USERNAME}
+    image: neimheadh/ant-vue
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.ant_vue.rule=Host(`ant.docker.localhost`)
+      - traefik.docker.network=reverse-proxy
+    networks:
+      - reverse-proxy
+    volumes:
+      - './:/app'

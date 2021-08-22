@@ -1,0 +1,12 @@
+{
+  "name": "ant-vue",
+  "scripts": {
+    "dev": "nuxt -H 0.0.0.0",
+    "build": "nuxt build",
+    "generate": "nuxt generate",
+    "start": "nuxt start"
+  },
+  "dependencies": {
+    "nuxt": "^2.15.8"
+  }
+}
