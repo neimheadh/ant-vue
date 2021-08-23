@@ -6,4 +6,10 @@ export default {
             '~/components/organisms',
         ],
     },
+
+    plugins: [
+        { src: '~/plugins/persistedState.client.js' },
+    ],
+
+    store: true,
 }
