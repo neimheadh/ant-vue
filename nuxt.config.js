@@ -1,4 +1,10 @@
+import fr from './translations/messages.fr';
+
 export default {
+    buildModules: [
+        '@nuxt/typescript-build',
+    ],
+
     components: {
         dirs: [
             '~/components/atoms',
@@ -7,8 +13,22 @@ export default {
         ],
     },
 
+    modules: [
+        ['@nuxtjs/i18n', {
+            locales: ['en', 'fr'],
+            defaultLocale: 'en',
+            vueI18n: { 
+                fallbackLocale: 'en',
+                messages: {
+                    en: require('./translations/messages.en'),
+                    fr: require('./translations/messages.fr'),
+                }
+            },
+        }],
+    ],
+
     plugins: [
-        { src: '~/plugins/persistedState.client.js' },
+        { src: '~/plugins/database.ts' },
     ],
 
     store: true,

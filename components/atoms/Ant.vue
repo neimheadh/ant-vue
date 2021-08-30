@@ -115,9 +115,9 @@ export default Vue.extend({
          * @param spd Speed the ant move its head.
          */
         headUp(deg = 25, spd = 2000) {
-            const head = this.$refs.head;
-            const rAntenna = this.$refs['r-antenna'];
-            const lAntenna = this.$refs['l-antenna'];
+            const head: SVGEllipseElement = <SVGEllipseElement> this.$refs.head;
+            const rAntenna: SVGPathElement = <SVGPathElement> this.$refs['r-antenna'];
+            const lAntenna: SVGPathElement = <SVGPathElement> this.$refs['l-antenna'];
 
             head.style.transition = `all ${spd}ms`;
             rAntenna.style.transition = ` all ${spd}ms`;
