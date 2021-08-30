@@ -5,7 +5,11 @@
             :key="`${primary()}.${field.name}`" 
             :field="field"
             :value="value(field)"
+            :table="table"
         />
+        <td>
+            <Button @click="$emit('remove', row)">Delete</Button>
+        </td>
     </tr>
 </template>
 
@@ -20,8 +24,8 @@ export default Vue.extend({
         },
         primary() {
             return this.row[this.primary_key];
-        }
+        },
     },
-    props: ['fields', 'primary_key', 'row'],
+    props: ['fields', 'primary_key', 'row', 'table'],
 })
 </script>

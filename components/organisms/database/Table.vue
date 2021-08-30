@@ -13,9 +13,13 @@
             <tbody>
                 <database-row 
                     v-for="row in rows" 
+
+                    @remove="remove"
+
                     :key="primary(row)" 
                     :fields="fields" 
-                    :primary-key="primary_key" :row="row" 
+                    :primary-key="primary_key" 
+                    :row="row" 
                 />
             </tbody>
         </table>
@@ -62,6 +66,8 @@ export default Vue.extend({
         },
 
         remove(row: any) {
+            console.log(row);
+            
             this.$db.delete(this.table, row[this.primary_key])
                 .catch(error => this.error = error)
                 .then(() => this.load());
