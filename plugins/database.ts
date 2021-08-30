@@ -4,7 +4,10 @@ import IndexedDB from "~/database/sgbd/IndexedDB";
 export default async (ctx: Context, inject: Inject) => {
     if (process.browser) {
         const db = new IndexedDB(ctx, 'ant-bank-manager');
+        
         await db.open();
+        await db.init();
+
         return inject('db', db);
     }
 }

@@ -12,7 +12,7 @@ export default class IndexedDB implements IDatabaseSGBD {
     /**
      * Opened database.
      */
-     private _db?: IDBDatabase;
+    private _db?: IDBDatabase;
 
     /**
      * Database open Promise.reject.
@@ -22,7 +22,12 @@ export default class IndexedDB implements IDatabaseSGBD {
     /**
      * Database open Promise.resolve.
      */
-    private _idbOpenResolve?: (value: IDatabaseSGBD | PromiseLike<IDatabaseSGBD>) => void;
+    private _idbOpenResolve?: (value: void | PromiseLike<void>) => void;
+
+    /**
+     * Created stores.
+     */
+    private _newStores: string[] = [];
 
     /**
      * Constructor.
@@ -64,7 +69,7 @@ export default class IndexedDB implements IDatabaseSGBD {
     private _onDatabaseOpenError(evt: Event): void {
         const request = <IDBOpenDBRequest> evt.target;
 
-        console.log('[InnoDB] Error opening database %s', request.result.name);
+        console.log('[IndexedDB] Error opening database %s', request.result.name);
         this._idbOpenReject && this._idbOpenReject(evt);
     }
 
@@ -77,9 +82,9 @@ export default class IndexedDB implements IDatabaseSGBD {
         const request = <IDBOpenDBRequest> evt.target;
         this._db = request.result;
 
-        console.log('[InnoDB] Successfully open database %s (version: %s)', request.result.name, request.result.version);
+        console.log('[IndexedDB] Successfully open database %s (version: %s)', request.result.name, request.result.version);
 
-        this._idbOpenResolve && this._idbOpenResolve(this);
+        this._idbOpenResolve && this._idbOpenResolve();
     }
 
     /**
@@ -87,23 +92,50 @@ export default class IndexedDB implements IDatabaseSGBD {
      * 
      * @param evt The event
      */
-    private _onDatabaseUpgradeNeeded(evt: Event): void {
+    private async _onDatabaseUpgradeNeeded(evt: Event): Promise<void> {
         const request = <IDBOpenDBRequest> evt.target;
         const db = request.result;
 
-        console.log('[InnoDB] Upgrading database %s', db.name);
+        console.log('[IndexedDB] Upgrading database %s', db.name);
 
         for (const table of Tables) {
+            if (!db.objectStoreNames.contains(table.name)) {
+                console.log('[IndexedDB] Create store %s', table.name);
+                this._newStores.push(table.name);
+            }
+
             const store = db.objectStoreNames.contains(table.name)
                 ? request.transaction?.objectStore(table.name)
                 : db.createObjectStore(table.name, { keyPath: table.primary_key });
 
+            console.log('[IndexedDB] Initialize store %s', table.name);
             for (const index of table.indexes) {
                 const name = index.name ?? index.field;
 
                 if (store) {
                     store.indexNames.contains(name) && store.deleteIndex(name);
                     store.createIndex(name ?? index.field, index.field, { unique: index.unique });
+                }
+            }
+        }
+
+        return Promise.resolve();
+    }
+
+    /**
+     * Set generated value of a dataset.
+     * 
+     * @param dataset The dataset.
+     * @param table The associated table.
+     */
+    private _setGeneratedValues(dataset: any, table: IDatabaseTable): void
+    {
+        for (const field of table.fields) {
+            if (dataset[field.name] === undefined) {
+                if (field.default !== undefined) {
+                    dataset[field.name] = field.default;
+                } else if (field.generator) {
+                    dataset[field.name] = field.generator.value();
                 }
             }
         }
@@ -198,18 +230,15 @@ export default class IndexedDB implements IDatabaseSGBD {
             return Promise.reject(`Table "${_table}" doesn't exists.`);
         }
 
+        console.log('[IndexedDB] Insert in store %s :', table.name, obj);
+
         return new Promise((resolve, reject) => {
             const transaction = db.transaction([_table], 'readwrite');
 
             // Initialize transaction error handling.
             transaction.onerror = reject;
 
-            // Initialize object generated value.
-            for (const field of table.fields) {
-                if (field.generator && !obj[field.name]) {
-                    obj[field.name] = field.generator.value();
-                }
-            }
+            this._setGeneratedValues(obj, table);
 
             // Insert in store.
             const store = transaction.objectStore(_table);
@@ -225,13 +254,37 @@ export default class IndexedDB implements IDatabaseSGBD {
     /**
      * {@inheritdoc}
      */
-    async open(): Promise<IDatabaseSGBD> {
+    async init(): Promise<void> {
+        if (!this._db) {
+            return Promise.reject('Database not opened.');
+        }
+
+        for (const store of this._newStores) {
+            const table = this._getTable(store);
+
+            if (!table) {
+                return Promise.reject(`Cannot find table ${table}`);
+            }
+
+            for (let dataset of table.default_content ?? []) {
+                this._setGeneratedValues(dataset, table);
+                this.insert(table.name, dataset);
+            }
+        }
+
+        return Promise.resolve();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    async open(): Promise<void> {
         this._initialized('open');
         
         if (process.browser && window) {
             const request = window.indexedDB.open(this.name, this.version);
         
-            console.log('[InnoDB] Opening database %s', this.name);
+            console.log('[IndexedDB] Opening database %s', this.name);
             
             return new Promise((resolve, reject) => {
                 this._idbOpenReject = reject;
@@ -243,7 +296,7 @@ export default class IndexedDB implements IDatabaseSGBD {
             });
         }
 
-        console.warn('[InnoDB] Window not defined -- cannot initialize database.');
+        console.warn('[IndexedDB] Window not defined -- cannot initialize database.');
         return Promise.reject();
     }
 }

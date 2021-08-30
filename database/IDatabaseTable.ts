@@ -8,6 +8,11 @@ import IDatabaseIndex from "./IDatabaseIndex";
  */
 export default interface IDatabaseTable {
     /**
+     * Database default content.
+     */
+    readonly default_content?: any[];
+
+    /**
      * The table fields.
      */
     readonly fields: IDatabaseField[];

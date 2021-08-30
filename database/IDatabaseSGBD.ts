@@ -1,4 +1,5 @@
 import { Context } from "@nuxt/types";
+import IDatabaseTable from "./IDatabaseTable";
 
 /**
  * A database sgbd manager.
@@ -46,9 +47,12 @@ export default interface IDatabaseSGBD {
     insert(table: string, obj: any): Promise<any>;
 
     /**
-     * Open database.
-     * 
-     * @return this
+     * Initialize database data.
      */
-    open(): Promise<IDatabaseSGBD>;
+    init(): Promise<void>
+
+    /**
+     * Open database.
+     */
+    open(): Promise<void>;
 }

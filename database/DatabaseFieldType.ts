@@ -1,8 +1,10 @@
 enum DatabaseFieldType {
-    String,
-    Integer,
-    Text,
+    Date,
+    Datetime,
     Double,
+    Integer,
+    String,
+    Text,
 };
 
 export default DatabaseFieldType;

@@ -6,6 +6,11 @@ import IDatabaseValueGenerator from "./IDatabasevalueGenerator";
  */
 export default interface IDatabaseField {
     /**
+     * Default value.
+     */
+    readonly default?: any;
+
+    /**
      * Value generator.
      */
     readonly generator?: IDatabaseValueGenerator<any>;
