@@ -8,6 +8,16 @@ import UUIDGenerator from "../valueGenerators/UUIDGenerator";
  */
 export default class Bank implements IDatabaseTable {
     /**
+     * Table name.
+     */
+    static TABLE = 'bank';
+
+    /**
+     * UUID field.
+     */
+    static UUID = 'uuid';
+
+    /**
      * {@inheritdoc}
      * 
      * @todo Remove -- this is just a test.
@@ -19,22 +29,27 @@ export default class Bank implements IDatabaseTable {
     /**
      * {@inheritdoc}
      */
-    readonly fields = [
-        { name: 'uuid', generator: new UUIDGenerator() },
+    readonly display_field = 'name';
+
+    /**
+     * {@inheritdoc}
+     */
+    readonly fields: IDatabaseField[] = [
+        { name: Bank.UUID, generator: new UUIDGenerator() },
         { name: 'name' }
     ];
 
     /**
      * {@inheritdoc}
      */
-    readonly indexes = [
+    readonly indexes: IDatabaseIndex[] = [
         { field: 'name', unique: true }
     ];
 
     /**
      * {@inheritdoc}
      */
-    readonly name = 'bank';
+    readonly name = Bank.TABLE;
 
     /**
      * {@inheritdoc}

@@ -13,6 +13,11 @@ export default interface IDatabaseTable {
     readonly default_content?: any[];
 
     /**
+     * Used field to convert table into string representation.
+     */
+    readonly display_field?: string;
+
+    /**
      * The table fields.
      */
     readonly fields: IDatabaseField[];

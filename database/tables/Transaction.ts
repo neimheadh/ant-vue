@@ -1,11 +1,24 @@
 import DatabaseFieldType from "../DatabaseFieldType";
+import IDatabaseField from "../IDatabaseField";
+import IDatabaseIndex from "../IDatabaseIndex";
 import IDatabaseTable from "../IDatabaseTable";
 import UUIDGenerator from "../valueGenerators/UUIDGenerator";
+import Account from "./Account";
 
 /**
  * Account transaction table.
  */
 export default class Transaction implements IDatabaseTable {
+    /**
+     * UUID field.
+     */
+    static UUID = 'uuid';
+
+    /**
+     * Table name.
+     */
+    static TABLE = 'transaction';
+
     /**
      * {@inheritdoc}
      */
@@ -19,11 +32,16 @@ export default class Transaction implements IDatabaseTable {
     /**
      * {@inheritdoc}
      */
-    readonly fields = [
-        { name: 'uuid', generator: new UUIDGenerator() },
+    readonly display_field = 'label';
+
+    /**
+     * {@inheritdoc}
+     */
+    readonly fields: IDatabaseField[] = [
+        { name: Transaction.UUID, generator: new UUIDGenerator() },
         { name: 'operation_date', type: DatabaseFieldType.Datetime, default: Date.now() },
         { name: 'record_date', type: DatabaseFieldType.Datetime },
-        { name: 'account' },
+        { name: 'account', link: { table: Account.TABLE, field: Account.UUID } },
         { name: 'label' },
         { name: 'balance', type: DatabaseFieldType.Double },
     ];
@@ -31,7 +49,7 @@ export default class Transaction implements IDatabaseTable {
     /**
      * {@inheritdoc}
      */
-    readonly indexes = [
+    readonly indexes: IDatabaseIndex[] = [
         { field: 'operation_date' },
         { field: 'record_date' },
         { field: 'account' },
@@ -42,7 +60,7 @@ export default class Transaction implements IDatabaseTable {
     /**
      * {@inheritdoc}
      */
-    readonly name = 'transaction';
+    readonly name = Transaction.TABLE;
 
     /**
      * {@inheritdoc}

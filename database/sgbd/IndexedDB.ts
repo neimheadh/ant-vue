@@ -1,6 +1,6 @@
 import { Context } from "@nuxt/types";
 import IDatabaseSGBD from "~/database/IDatabaseSGBD";
-import Tables from '~/database/tables';
+import {default as Tables, getTable} from '~/database/tables';
 import IDatabaseTable from "../IDatabaseTable";
 
 const VERSION = 1;
@@ -36,19 +36,6 @@ export default class IndexedDB implements IDatabaseSGBD {
      * @param name Database name.
      */
     constructor(public ctx: Context, public name: string, public version: number = VERSION) {}
-
-    /**
-     * Get the database object by its name.
-     * 
-     * @param name The table name.
-     */
-    private _getTable(name: string): IDatabaseTable | undefined {
-        for (const table of Tables) {
-            if (table.name === name) {
-                return table;
-            }
-        }
-    }
 
     /**
      * Check if the plugin is initialized.
@@ -109,6 +96,7 @@ export default class IndexedDB implements IDatabaseSGBD {
                 : db.createObjectStore(table.name, { keyPath: table.primary_key });
 
             console.log('[IndexedDB] Initialize store %s', table.name);
+            
             for (const index of table.indexes) {
                 const name = index.name ?? index.field;
 
@@ -150,7 +138,7 @@ export default class IndexedDB implements IDatabaseSGBD {
         }
 
         const db = this._db;
-        const table = this._getTable(_table);
+        const table = getTable(_table);
 
         if (!table) {
             return Promise.reject(`Table "${_table}" doesn't exists.`);
@@ -192,6 +180,8 @@ export default class IndexedDB implements IDatabaseSGBD {
             if (!id) {
                 const request = store.openCursor();
                 const result: any[] = [];
+
+                console.log('[IndexedDB] Load rows from storage %s', store.name);
     
                 request.onerror = reject;
                 request.onsuccess = (evt: Event) => {
@@ -207,8 +197,10 @@ export default class IndexedDB implements IDatabaseSGBD {
             } else {
                 const request = store.get(id);
 
+                console.log('[IndexedDB] Low row %s from storage %s', id, store.name);
+
                 request.onerror = reject;
-                request.onsuccess = () => {
+                request.onsuccess = (evt) => {
                     resolve(request.result);
                 }
             }
@@ -224,7 +216,7 @@ export default class IndexedDB implements IDatabaseSGBD {
         }
 
         const db = this._db;
-        const table = this._getTable(_table);
+        const table = getTable(_table);
 
         if (!table) {
             return Promise.reject(`Table "${_table}" doesn't exists.`);
@@ -260,7 +252,7 @@ export default class IndexedDB implements IDatabaseSGBD {
         }
 
         for (const store of this._newStores) {
-            const table = this._getTable(store);
+            const table = getTable(store);
 
             if (!table) {
                 return Promise.reject(`Cannot find table ${table}`);

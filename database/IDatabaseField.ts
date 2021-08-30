@@ -1,4 +1,5 @@
 import DatabaseFieldType from './DatabaseFieldType';
+import IDatabaseTableLink from './IDatabaseTableLink';
 import IDatabaseValueGenerator from "./IDatabasevalueGenerator";
 
 /**
@@ -14,6 +15,11 @@ export default interface IDatabaseField {
      * Value generator.
      */
     readonly generator?: IDatabaseValueGenerator<any>;
+
+    /**
+     * Field table link.
+     */
+    readonly link?: IDatabaseTableLink;
 
     /**
      * Field name.
