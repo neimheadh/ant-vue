@@ -13,6 +13,11 @@ export default interface IDatabaseTable {
     readonly default_content?: any[];
 
     /**
+     * Default sort field.
+     */
+    readonly default_sort?: string;
+
+    /**
      * Used field to convert table into string representation.
      */
     readonly display_field?: string;

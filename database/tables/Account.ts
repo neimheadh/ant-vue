@@ -4,6 +4,7 @@ import DatabaseFieldType from "../DatabaseFieldType";
 import UUIDGenerator from "../valueGenerators/UUIDGenerator";
 import IDatabaseIndex from "../IDatabaseIndex";
 import IDatabaseField from "../IDatabaseField";
+import CurrentDateGenerator from "../valueGenerators/CurrentDateGenerator";
 
 /**
  * Bank accounts table.
@@ -30,6 +31,11 @@ export default class Account implements IDatabaseTable {
     /**
      * {@inheritdoc}
      */
+    readonly default_sort = 'creation_date';
+
+    /**
+     * {@inheritdoc}
+     */
     readonly display_field = 'name';
 
     /**
@@ -40,6 +46,8 @@ export default class Account implements IDatabaseTable {
         { name: 'name' },
         { name: 'balance', type: DatabaseFieldType.Double, default: 0 },
         { name: 'bank', link: { table: Bank.TABLE, field: Bank.UUID } },
+        { name: 'creation_date', type: DatabaseFieldType.Datetime, generator: new CurrentDateGenerator() },
+        { name: 'update_date', type: DatabaseFieldType.Datetime },
     ];
 
     /**
@@ -48,6 +56,7 @@ export default class Account implements IDatabaseTable {
     readonly indexes: IDatabaseIndex[] = [
         { field: 'name' },
         { field: 'balance' },
+        { field: 'creation_date' },
     ];
 
     /**

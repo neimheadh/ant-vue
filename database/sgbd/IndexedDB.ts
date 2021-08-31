@@ -164,21 +164,28 @@ export default class IndexedDB implements IDatabaseSGBD {
     /**
      * {@inheritdoc}
      */
-    get(table: string, id?: any): Promise<any> {
+    get(_table: string, id?: any): Promise<any> {
         if (!this._db) {
             return Promise.reject('Database not opened.');
         }
 
         const db = this._db;
+        const table = getTable(_table);
+
+        if (!table) {
+            return Promise.reject(`Table "${_table}" doesn't exists.`);
+        }
 
         return new Promise((resolve, reject) => {
-            const transaction = db.transaction([table]);
-            const store = transaction.objectStore(table);
+            const transaction = db.transaction([table.name]);
+            const store = transaction.objectStore(table.name);
 
             transaction.onerror = reject;
             
             if (!id) {
-                const request = store.openCursor();
+                const request = table.default_sort
+                    ? store.index(table.default_sort).openCursor()
+                    : store.openCursor();
                 const result: any[] = [];
 
                 console.log('[IndexedDB] Load rows from storage %s', store.name);
@@ -197,7 +204,7 @@ export default class IndexedDB implements IDatabaseSGBD {
             } else {
                 const request = store.get(id);
 
-                console.log('[IndexedDB] Low row %s from storage %s', id, store.name);
+                console.log('[IndexedDB] Load row %s from storage %s', id, store.name);
 
                 request.onerror = reject;
                 request.onsuccess = (evt) => {

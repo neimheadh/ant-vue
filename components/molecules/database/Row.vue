@@ -1,7 +1,10 @@
 <template>
     <tr>
         <database-field 
-            v-for="field in fields" 
+            v-for="field in fields"
+
+            @insert="$emit('insert', $event.target.value)"
+
             :key="`${primary()}.${field.name}`" 
             :field="field"
             :value="value(field)"
@@ -20,12 +23,12 @@ import IDatabaseField from '~/database/IDatabaseField';
 export default Vue.extend({
     methods: {
         value(field: IDatabaseField) {
-            return this.row[field.name];
+            return this.row[field.name] ?? '';
         },
         primary() {
-            return this.row[this.primary_key];
+            return this.row[this.primaryKey];
         },
     },
-    props: ['fields', 'primary_key', 'row', 'table'],
+    props: ['fields', 'primaryKey', 'row', 'table'],
 })
 </script>

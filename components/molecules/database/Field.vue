@@ -1,43 +1,73 @@
 <template>
-    <td>{{ display }}</td>
+    <td>
+        <Link v-if="link" :href="link.to" :title="link.title">{{ link.display }}</Link>
+        <template v-else>{{ display }}</template>
+    </td>
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
-import IDatabaseField from '~/database/IDatabaseField'
-import IDatabaseTable from '~/database/IDatabaseTable';
+import Vue from 'vue';
+import DatabaseFieldType from '~/database/DatabaseFieldType';
+import IDatabaseField from '~/database/IDatabaseField';
 import { getTable } from '~/database/tables';
+
+interface Link {
+    display: string,
+    title?: any,
+    to?: string,
+}
 
 export default Vue.extend({
     data: () => ({
-        display: <any> undefined,
+        link: <Link | undefined> undefined,
     }),
-
+    
     async mounted() {
-        this.display = await this.load();
+        this.link = await this.getLink();
     },
 
-    methods: {
-        async load() {
-            const field = <IDatabaseField> this.field;
-            let link: any, table: IDatabaseTable | undefined;
+    computed: {
+        display(): string {
+            const field = <IDatabaseField | undefined> this.field;
 
-            if (field.link) {
-                table = getTable(field.link.table);
+            if (this.value && field && [DatabaseFieldType.Date, DatabaseFieldType.Datetime].includes(<any> field.type)) {
+                const date = new Date(<number> this.value);
 
-                if (table && table.display_field) {
-                    link = await this.$db.get(table.name, this.value);
-                }
+                return date.toLocaleString('en-US');
             }
 
-            console.log(field.name, field.link, link, table, table?.display_field);
-
-            return link && table && table.display_field
-                ? link[table.display_field]
-                : this.value;
+            return `${this.value}`;
         },
     },
 
-    props: ['field', 'value'],
+    methods: {
+        async getLink(): Promise<Link | undefined> {
+            const field = <IDatabaseField | undefined> this.field;
+
+            if (field && field.link && this.value !== undefined) {
+                const table = getTable(field.link.table);
+
+                if (table !== undefined && table.display_field) {
+                    const rel = await this.$db.get(table.name, this.value);
+                    
+                    if (rel) {
+                        return {
+                            display: rel[table.display_field],
+                            title: this.value,
+                            to: `${table.name}/${this.value}`,
+                        };
+                    }
+                }
+            }
+
+            return undefined;
+        }
+    },
+    props: {
+        field: {
+            type: [Object],
+        },
+        value: {},
+    },
 })
 </script>

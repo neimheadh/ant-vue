@@ -1,5 +1,12 @@
 <template>
     <div>
+        <database-form 
+            @insert="load"
+
+            :fields="formFields"
+            :table="table"
+        ></database-form>
+
         <Error v-if="error">{{ error }}</Error>
         <table v-else>
             <thead>
@@ -12,13 +19,13 @@
             </thead>
             <tbody>
                 <database-row 
-                    v-for="row in rows" 
+                    v-for="row in rows"
 
                     @remove="remove"
 
                     :key="primary(row)" 
                     :fields="fields" 
-                    :primary-key="primary_key" 
+                    :primary-key="primaryKey" 
                     :row="row" 
                 />
             </tbody>
@@ -66,21 +73,20 @@ export default Vue.extend({
         },
 
         remove(row: any) {
-            console.log(row);
-            
-            this.$db.delete(this.table, row[this.primary_key])
+            this.$db.delete(this.table, row[this.primaryKey])
                 .catch(error => this.error = error)
                 .then(() => this.load());
         },
 
         primary(row: any) {
-            return row[this.primary_key];
+            return row[this.primaryKey];
         }
     },
     props: {
-        display: { type: [String] },
-        primary_key: { type: [String], default: 'uuid' },
-        table: { type: [String] },
+        formFields: Array,
+        display: String,
+        primaryKey: { type: [String], default: 'uuid' },
+        table: String,
     }
 })
 </script>
