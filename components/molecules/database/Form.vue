@@ -4,6 +4,7 @@
             :key="input.key"
             :label="input.name"
             :placeholder="input.name"
+            :step=".01"
             :type="input.type"
 
             v-model="model[input.name]"

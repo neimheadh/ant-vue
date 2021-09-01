@@ -13,7 +13,7 @@ export default class PostUpdateEvent extends ADatabaseEvent {
     /**
      * Constructor.
      */
-    constructor(manager: IDatabaseManager) {
+    constructor(manager: IDatabaseManager, public updated?: any, readonly previous?: any) {
         super(PostUpdateEvent.NAME, manager);
     }
 }

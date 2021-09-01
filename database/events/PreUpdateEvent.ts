@@ -13,7 +13,7 @@ import ADatabaseEvent from "./ADatabaseEvent";
     /**
      * Constructor.
      */
-    constructor(manager: IDatabaseManager) {
+    constructor(manager: IDatabaseManager, public updated?: any, readonly previous?: any) {
         super(PreUpdateEvent.NAME, manager)
     }
 }

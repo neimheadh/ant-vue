@@ -2,6 +2,7 @@
   <input
     :type="type" 
     :placeholder="placeholder"
+    :step="type === InputType.number && step"
 
     v-bind:value="value"
     v-on:input="$emit('input', $event)"
@@ -43,6 +44,9 @@ export enum InputType {
  * Input atom.
  */
 export default Vue.extend({
+  data: () => ({
+    InputType,
+  }),
   props: {
     /**
      * The input type.
@@ -68,6 +72,15 @@ export default Vue.extend({
     value: {
       type: [Number, String],
     },
+
+    /**
+     * Number type step.
+     */
+    step: {
+      validator: value => {
+        return typeof value === 'number' || value === "any";
+      }
+    }
   }
 })
 </script>

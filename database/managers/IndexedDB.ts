@@ -1,15 +1,17 @@
 import { Context } from "@nuxt/types";
-import {default as Tables, getTable} from '~/database/tables';
+import { default as Tables, getTable } from '~/database/tables';
 import PostDelete from "../events/PostDeleteEvent";
 import PostInsertEvent from "../events/PostInsertEvent";
 import PostLoadEvent from "../events/PostLoadEvent";
 import PostOpenEvent from "../events/PostOpenEvent";
 import PostSchemaUpdateEvent from "../events/PostSchemaUpdateEvent";
+import PostUpdateEvent from "../events/PostUpdateEvent";
 import PreDeleteEvent from "../events/PreDeleteEvent";
 import PreInsertEvent from "../events/PreInsertEvent";
 import PreLoadEvent from "../events/PreLoadEvent";
 import PreOpenEvent from "../events/PreOpenEvent";
 import PreSchemaUpdateEvent from "../events/PreSchemaUpdateEvent";
+import PreUpdateEvent from "../events/PreUpdateEvent";
 import IDatabaseManager from "../IDatabaseManager";
 import IDatabaseTable from "../IDatabaseTable";
 
@@ -45,7 +47,7 @@ export default class IndexedDB implements IDatabaseManager {
      * @param ctx Nuxt context. 
      * @param name Database name.
      */
-    constructor(public ctx: Context, public name: string, public version: number = VERSION) {}
+    constructor(public ctx: Context, public name: string, public version: number = VERSION) { }
 
     /**
      * Check if the plugin is initialized.
@@ -64,7 +66,7 @@ export default class IndexedDB implements IDatabaseManager {
      * @param evt The event. 
      */
     private _onDatabaseOpenError(evt: Event): void {
-        const request = <IDBOpenDBRequest> evt.target;
+        const request = <IDBOpenDBRequest>evt.target;
 
         console.log('[IndexedDB] Error opening database %s', request.result.name);
         this._idbOpenReject && this._idbOpenReject(evt);
@@ -76,7 +78,7 @@ export default class IndexedDB implements IDatabaseManager {
      * @param evt The event. 
      */
     private _onDatabaseOpenSuccess(evt: Event): void {
-        const request = <IDBOpenDBRequest> evt.target;
+        const request = <IDBOpenDBRequest>evt.target;
         const tables: IDatabaseTable[] = Tables;
 
         this._db = request.result;
@@ -93,7 +95,7 @@ export default class IndexedDB implements IDatabaseManager {
      * @param evt The event
      */
     private async _onDatabaseUpgradeNeeded(evt: Event): Promise<void> {
-        const request = <IDBOpenDBRequest> evt.target;
+        const request = <IDBOpenDBRequest>evt.target;
         const db = request.result;
         const tables: IDatabaseTable[] = Tables;
 
@@ -112,7 +114,7 @@ export default class IndexedDB implements IDatabaseManager {
                 : db.createObjectStore(table.name, { keyPath: table.primary_key });
 
             console.log('[IndexedDB] Initialize store %s', table.name);
-            
+
             for (const index of table.indexes) {
                 const name = index.name ?? index.field;
 
@@ -122,7 +124,7 @@ export default class IndexedDB implements IDatabaseManager {
                 }
             }
         }
-        
+
         tables.forEach(table => table.events?.dispatchEvent(new PostSchemaUpdateEvent(this)));
         return Promise.resolve();
     }
@@ -133,8 +135,7 @@ export default class IndexedDB implements IDatabaseManager {
      * @param dataset The dataset.
      * @param table The associated table.
      */
-    private _setGeneratedValues(dataset: any, table: IDatabaseTable): void
-    {
+    private _setGeneratedValues(dataset: any, table: IDatabaseTable): void {
         for (const field of table.fields) {
             if (dataset[field.name] === undefined) {
                 if (field.default !== undefined) {
@@ -162,7 +163,7 @@ export default class IndexedDB implements IDatabaseManager {
         }
 
         console.log('[IndexedDB] Delete in store %s :', table.name, id);
-        table.events?.dispatchEvent(new PreDeleteEvent(this, {id}));
+        table.events?.dispatchEvent(new PreDeleteEvent(this, { id }));
 
         const deleted = await this.get(table.name, id);
 
@@ -202,14 +203,14 @@ export default class IndexedDB implements IDatabaseManager {
         if (!table) {
             return Promise.reject(`Table "${_table}" doesn't exists.`);
         }
-        table.events?.dispatchEvent(new PreLoadEvent(this, {id}));
+        table.events?.dispatchEvent(new PreLoadEvent(this, { id }));
 
         return new Promise((resolve, reject) => {
             const transaction = db.transaction([table.name]);
             const store = transaction.objectStore(table.name);
 
             transaction.onerror = reject;
-            
+
             if (!id) {
                 const request = table.default_sort
                     ? store.index(table.default_sort).openCursor()
@@ -217,11 +218,11 @@ export default class IndexedDB implements IDatabaseManager {
                 const result: any[] = [];
 
                 console.log('[IndexedDB] Load rows from storage %s', store.name);
-    
+
                 request.onerror = reject;
                 request.onsuccess = (evt: Event) => {
                     const cursor = request.result;
-    
+
                     if (cursor) {
                         result.push(cursor.value);
                         table.events?.dispatchEvent(new PostLoadEvent(this, cursor.value));
@@ -315,16 +316,16 @@ export default class IndexedDB implements IDatabaseManager {
         tables.forEach(table => table.events?.dispatchEvent(new PreOpenEvent(this)));
 
         this._initialized('open');
-        
+
         if (process.browser && window) {
             const request = window.indexedDB.open(this.name, this.version);
-        
+
             console.log('[IndexedDB] Opening database %s', this.name);
-            
+
             return new Promise((resolve, reject) => {
                 this._idbOpenReject = reject;
                 this._idbOpenResolve = resolve;
-    
+
                 request.onsuccess = this._onDatabaseOpenSuccess.bind(this);
                 request.onerror = this._onDatabaseOpenError.bind(this);
                 request.onupgradeneeded = this._onDatabaseUpgradeNeeded.bind(this);
@@ -333,5 +334,42 @@ export default class IndexedDB implements IDatabaseManager {
 
         console.warn('[IndexedDB] Window not defined -- cannot initialize database.');
         return Promise.reject();
+    }
+
+    async update(_table: string, obj: any): Promise<any> {
+        if (!this._db) {
+            return Promise.reject('Database not opened.');
+        }
+
+        const db = this._db;
+        const table = getTable(_table);
+
+        if (!table) {
+            return Promise.reject(`Table "${_table}" doesn't exists.`);
+        }
+
+        console.log('[IndexedDB] Update in store %s :', table.name, obj);
+
+        const previous = table.primary_key && await this.get(table.name, obj[table.primary_key]);
+        table.events?.dispatchEvent(new PreUpdateEvent(this, obj, previous));
+
+        return new Promise((resolve, reject) => {
+            const transaction = db.transaction([_table], 'readwrite');
+
+            // Initialize transaction error handling.
+            transaction.onerror = reject;
+
+            this._setGeneratedValues(obj, table);
+
+            // Insert in store.
+            const store = transaction.objectStore(_table);
+            const request = store.put(obj);
+
+            request.onerror = reject;
+            request.onsuccess = () => {
+                table.events?.dispatchEvent(new PostUpdateEvent(this, obj, previous));
+                resolve(obj);
+            }
+        });        
     }
 }

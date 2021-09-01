@@ -102,7 +102,8 @@ export default class Transaction implements IDatabaseTable {
 
             if (account) {
                 account.balance = parseFloat(account.balance) + parseFloat(event.inserted.balance);
-                console.log(account);
+
+                event.manager.update(Account.TABLE, account);
             }
         }
     }
@@ -112,6 +113,31 @@ export default class Transaction implements IDatabaseTable {
      * 
      * @param event The post-update event.
      */
-    private _onPostUpdate(event: Event | PostUpdateEvent): void {
+    private async _onPostUpdate(_event: Event): Promise<void> {
+        const event = <PostUpdateEvent> _event;
+
+        if (event.updated && event.previous) {
+            if (event.updated.account !== event.previous.account) {
+                const previous_account = await event.manager.get(Account.TABLE, event.previous.account);
+                const new_account = await event.manager.get(Account.TABLE, event.updated.account);
+
+                if (previous_account) {
+                    previous_account.balance = parseFloat(previous_account.balance) - parseFloat(event.previous.balance);
+                    await event.manager.update(Account.TABLE, previous_account);
+                }
+
+                if (new_account) {
+                    new_account.balance = parseFloat(new_account.balance) + parseFloat(event.updated.balance);
+                    await event.manager.update(Account.TABLE, new_account);
+                }
+            } else {
+                const diff = parseFloat(event.previous.balance) - parseFloat(event.updated.balance);
+                const account = await event.manager.get(Account.TABLE, event.updated.account);
+
+                if (account) {
+                    account.balance = parseFloat(account.balance) + diff;
+                }
+            }
+        }
     }
 }

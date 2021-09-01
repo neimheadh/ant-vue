@@ -54,4 +54,14 @@ export default interface IDatabaseManager {
      * Open database.
      */
     open(): Promise<void>;
+
+    /**
+     * Update an object in table.
+     * 
+     * @param table The table name. 
+     * @param obj The updated object.
+     * 
+     * @return The updated object in database.
+     */
+    update(table: string, obj: any): Promise<any>;
 }

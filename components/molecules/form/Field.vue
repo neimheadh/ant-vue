@@ -8,6 +8,7 @@
 
             :name="name" 
             :placeholder="placeholder"
+            :step="step"
             :type="inputType"
             
             v-bind:value="value"
@@ -74,6 +75,11 @@ export default Vue.extend({
         placeholder: {
             type: [String],
         },
+
+        /**
+         * Number type step.
+         */
+        step: {},
 
         /**
          * The field type.
