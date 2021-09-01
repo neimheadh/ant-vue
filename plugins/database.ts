@@ -1,5 +1,5 @@
 import { Context, Inject } from "@nuxt/types/app";
-import IndexedDB from "~/database/sgbd/IndexedDB";
+import IndexedDB from "~/database/managers/IndexedDB";
 
 export default async (ctx: Context, inject: Inject) => {
     if (process.browser) {

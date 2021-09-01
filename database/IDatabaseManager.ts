@@ -1,5 +1,4 @@
 import { Context } from "@nuxt/types";
-import IDatabaseTable from "./IDatabaseTable";
 
 /**
  * A database sgbd manager.
@@ -7,12 +6,12 @@ import IDatabaseTable from "./IDatabaseTable";
  * Implements interaction to the database system it
  * handle (InnoDB, API, ...).
  */
-export default interface IDatabaseSGBD {
+export default interface IDatabaseManager {
     /**
      * Nuxt context.
      */
     ctx: Context;
-    
+
     /**
      * Database name.
      */

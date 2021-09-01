@@ -1,7 +1,11 @@
 import DatabaseFieldType from "../DatabaseFieldType";
+import DatabaseEventTarget from "../events/DatabaseEventTarget";
+import PostInsertEvent from "../events/PostInsertEvent";
+import PostUpdateEvent from "../events/PostUpdateEvent";
 import IDatabaseField from "../IDatabaseField";
 import IDatabaseIndex from "../IDatabaseIndex";
 import IDatabaseTable from "../IDatabaseTable";
+import CurrentDateGenerator from "../valueGenerators/CurrentDateGenerator";
 import UUIDGenerator from "../valueGenerators/UUIDGenerator";
 import Account from "./Account";
 
@@ -32,14 +36,24 @@ export default class Transaction implements IDatabaseTable {
     /**
      * {@inheritdoc}
      */
+    readonly default_sort = 'operation_date';
+
+    /**
+     * {@inheritdoc}
+     */
     readonly display_field = 'label';
+
+    /**
+     * {@inheritdoc}
+     */
+    readonly events = new DatabaseEventTarget();
 
     /**
      * {@inheritdoc}
      */
     readonly fields: IDatabaseField[] = [
         { name: Transaction.UUID, generator: new UUIDGenerator() },
-        { name: 'operation_date', type: DatabaseFieldType.Datetime, default: Date.now() },
+        { name: 'operation_date', type: DatabaseFieldType.Datetime, generator: new CurrentDateGenerator },
         { name: 'record_date', type: DatabaseFieldType.Datetime },
         { name: 'account', link: { table: Account.TABLE, field: Account.UUID } },
         { name: 'label' },
@@ -67,4 +81,37 @@ export default class Transaction implements IDatabaseTable {
      */
     readonly primary_key = 'uuid';
     
+    /**
+     * Constructor.
+     */
+    constructor() {
+        this.events.addEventListener(PostInsertEvent.NAME, this._onPostInsert);
+        this.events.addEventListener(PostUpdateEvent.NAME, this._onPostUpdate);
+    }
+
+    /**
+     * Handle post insert event.
+     * 
+     * @param event The post-insert event.
+     */
+    private async _onPostInsert(_event: Event): Promise<void> {
+        const event = <PostInsertEvent> _event;
+
+        if (event.inserted) {
+            const account = await event.manager.get(Account.TABLE, event.inserted.account);
+
+            if (account) {
+                account.balance = parseFloat(account.balance) + parseFloat(event.inserted.balance);
+                console.log(account);
+            }
+        }
+    }
+
+    /**
+     * Handle post-update event.
+     * 
+     * @param event The post-update event.
+     */
+    private _onPostUpdate(event: Event | PostUpdateEvent): void {
+    }
 }

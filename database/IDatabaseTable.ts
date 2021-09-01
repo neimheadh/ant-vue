@@ -23,6 +23,11 @@ export default interface IDatabaseTable {
     readonly display_field?: string;
 
     /**
+     * Table events target.
+     */
+    readonly events?: EventTarget;
+
+    /**
      * The table fields.
      */
     readonly fields: IDatabaseField[];

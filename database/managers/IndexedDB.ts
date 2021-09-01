@@ -1,6 +1,16 @@
 import { Context } from "@nuxt/types";
-import IDatabaseSGBD from "~/database/IDatabaseSGBD";
 import {default as Tables, getTable} from '~/database/tables';
+import PostDelete from "../events/PostDeleteEvent";
+import PostInsertEvent from "../events/PostInsertEvent";
+import PostLoadEvent from "../events/PostLoadEvent";
+import PostOpenEvent from "../events/PostOpenEvent";
+import PostSchemaUpdateEvent from "../events/PostSchemaUpdateEvent";
+import PreDeleteEvent from "../events/PreDeleteEvent";
+import PreInsertEvent from "../events/PreInsertEvent";
+import PreLoadEvent from "../events/PreLoadEvent";
+import PreOpenEvent from "../events/PreOpenEvent";
+import PreSchemaUpdateEvent from "../events/PreSchemaUpdateEvent";
+import IDatabaseManager from "../IDatabaseManager";
 import IDatabaseTable from "../IDatabaseTable";
 
 const VERSION = 1;
@@ -8,7 +18,7 @@ const VERSION = 1;
 /**
  * Browser IndexedDB database plugin.
  */
-export default class IndexedDB implements IDatabaseSGBD {
+export default class IndexedDB implements IDatabaseManager {
     /**
      * Opened database.
      */
@@ -67,10 +77,13 @@ export default class IndexedDB implements IDatabaseSGBD {
      */
     private _onDatabaseOpenSuccess(evt: Event): void {
         const request = <IDBOpenDBRequest> evt.target;
+        const tables: IDatabaseTable[] = Tables;
+
         this._db = request.result;
 
         console.log('[IndexedDB] Successfully open database %s (version: %s)', request.result.name, request.result.version);
 
+        tables.forEach(table => table.events?.dispatchEvent(new PostOpenEvent(this)));
         this._idbOpenResolve && this._idbOpenResolve();
     }
 
@@ -82,6 +95,9 @@ export default class IndexedDB implements IDatabaseSGBD {
     private async _onDatabaseUpgradeNeeded(evt: Event): Promise<void> {
         const request = <IDBOpenDBRequest> evt.target;
         const db = request.result;
+        const tables: IDatabaseTable[] = Tables;
+
+        tables.forEach(table => table.events?.dispatchEvent(new PreSchemaUpdateEvent(this)));
 
         console.log('[IndexedDB] Upgrading database %s', db.name);
 
@@ -106,7 +122,8 @@ export default class IndexedDB implements IDatabaseSGBD {
                 }
             }
         }
-
+        
+        tables.forEach(table => table.events?.dispatchEvent(new PostSchemaUpdateEvent(this)));
         return Promise.resolve();
     }
 
@@ -132,7 +149,7 @@ export default class IndexedDB implements IDatabaseSGBD {
     /**
      * {@inheritdoc}
      */
-    delete(_table: string, id: any): Promise<void> {
+    async delete(_table: string, id: any): Promise<void> {
         if (!this._db) {
             return Promise.reject('Database not opened.');
         }
@@ -142,6 +159,15 @@ export default class IndexedDB implements IDatabaseSGBD {
 
         if (!table) {
             return Promise.reject(`Table "${_table}" doesn't exists.`);
+        }
+
+        console.log('[IndexedDB] Delete in store %s :', table.name, id);
+        table.events?.dispatchEvent(new PreDeleteEvent(this, {id}));
+
+        const deleted = await this.get(table.name, id);
+
+        if (!deleted) {
+            return Promise.resolve();
         }
 
         return new Promise((resolve, reject) => {
@@ -155,8 +181,9 @@ export default class IndexedDB implements IDatabaseSGBD {
             const request = store.delete(id);
 
             request.onerror = reject;
-            request.onsuccess = function() {
+            request.onsuccess = () => {
                 resolve();
+                table.events?.dispatchEvent(new PostDelete(this, deleted));
             };
         });
     }
@@ -175,6 +202,7 @@ export default class IndexedDB implements IDatabaseSGBD {
         if (!table) {
             return Promise.reject(`Table "${_table}" doesn't exists.`);
         }
+        table.events?.dispatchEvent(new PreLoadEvent(this, {id}));
 
         return new Promise((resolve, reject) => {
             const transaction = db.transaction([table.name]);
@@ -196,6 +224,7 @@ export default class IndexedDB implements IDatabaseSGBD {
     
                     if (cursor) {
                         result.push(cursor.value);
+                        table.events?.dispatchEvent(new PostLoadEvent(this, cursor.value));
                         cursor.continue();
                     } else {
                         resolve(result);
@@ -208,6 +237,7 @@ export default class IndexedDB implements IDatabaseSGBD {
 
                 request.onerror = reject;
                 request.onsuccess = (evt) => {
+                    table.events?.dispatchEvent(new PostLoadEvent(this, request.result));
                     resolve(request.result);
                 }
             }
@@ -230,6 +260,7 @@ export default class IndexedDB implements IDatabaseSGBD {
         }
 
         console.log('[IndexedDB] Insert in store %s :', table.name, obj);
+        table.events?.dispatchEvent(new PreInsertEvent(this, obj));
 
         return new Promise((resolve, reject) => {
             const transaction = db.transaction([_table], 'readwrite');
@@ -244,7 +275,8 @@ export default class IndexedDB implements IDatabaseSGBD {
             const request = store.add(obj);
 
             request.onerror = reject;
-            request.onsuccess = function() {
+            request.onsuccess = () => {
+                table.events?.dispatchEvent(new PostInsertEvent(this, obj));
                 resolve(obj);
             }
         });
@@ -278,6 +310,10 @@ export default class IndexedDB implements IDatabaseSGBD {
      * {@inheritdoc}
      */
     async open(): Promise<void> {
+        const tables: IDatabaseTable[] = Tables;
+
+        tables.forEach(table => table.events?.dispatchEvent(new PreOpenEvent(this)));
+
         this._initialized('open');
         
         if (process.browser && window) {
