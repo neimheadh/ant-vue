@@ -1,6 +1,38 @@
+import IDatabaseEventTarget from "../IDatabaseEventTarget";
 
-export default class DatabaseEventTarget implements EventTarget {
+export default class DatabaseEventTarget implements IDatabaseEventTarget {
+    /**
+     * List of listeners.
+     */
     private listeners: any = {};
+
+    /**
+     * {@inheritdoc}
+     */
+    processing: Promise<void> = Promise.resolve();
+
+    /**
+     * Process callback stack.
+     * 
+     * @param stack The callbacks stack.
+     * @param event The event.
+     */
+    private _process(stack: any, event: Event): Promise<void> {
+        return new Promise((resolve, reject) => {
+            if (stack.length) {
+                const callback = stack.splice(0, 1)[0];
+                const promise = callback.call(this, event);
+                
+                if (promise.then && promise.catch) {
+                    promise.catch(reject).then(() => this._process(stack, event).catch(reject).then(resolve));
+                } else {
+                    this._process(stack, event).catch(reject).then(resolve);
+                }
+            } else {
+                resolve();
+            }
+        });
+    }
 
     /**
      * {@inheritdoc}
@@ -21,10 +53,8 @@ export default class DatabaseEventTarget implements EventTarget {
             return true;
         }
         const stack = this.listeners[event.type].slice();
-    
-        for (let i = 0, l = stack.length; i < l; i++) {
-            stack[i].call(this, event);
-        }
+
+        this.processing = this._process(stack, event);
         
         return !event.defaultPrevented;
     }

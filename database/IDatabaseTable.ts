@@ -1,3 +1,4 @@
+import IDatabaseEventTarget from "./IDatabaseEventTarget";
 import IDatabaseField from "./IDatabaseField";
 import IDatabaseIndex from "./IDatabaseIndex";
 
@@ -25,7 +26,7 @@ export default interface IDatabaseTable {
     /**
      * Table events target.
      */
-    readonly events?: EventTarget;
+    readonly events?: IDatabaseEventTarget;
 
     /**
      * The table fields.

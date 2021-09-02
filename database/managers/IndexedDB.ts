@@ -276,8 +276,12 @@ export default class IndexedDB implements IDatabaseManager {
             const request = store.add(obj);
 
             request.onerror = reject;
-            request.onsuccess = () => {
-                table.events?.dispatchEvent(new PostInsertEvent(this, obj));
+            request.onsuccess = async () => {
+                if (table.events) {
+                    table.events.dispatchEvent(new PostInsertEvent(this, obj));
+                    await table.events.processing;
+                }
+
                 resolve(obj);
             }
         });
@@ -300,7 +304,7 @@ export default class IndexedDB implements IDatabaseManager {
 
             for (let dataset of table.default_content ?? []) {
                 this._setGeneratedValues(dataset, table);
-                this.insert(table.name, dataset);
+                await this.insert(table.name, dataset);
             }
         }
 
@@ -366,8 +370,11 @@ export default class IndexedDB implements IDatabaseManager {
             const request = store.put(obj);
 
             request.onerror = reject;
-            request.onsuccess = () => {
-                table.events?.dispatchEvent(new PostUpdateEvent(this, obj, previous));
+            request.onsuccess = async () => {
+                if (table.events) {
+                    table.events.dispatchEvent(new PostUpdateEvent(this, obj, previous));
+                    await table.events.processing;
+                }
                 resolve(obj);
             }
         });        

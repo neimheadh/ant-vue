@@ -103,7 +103,7 @@ export default class Transaction implements IDatabaseTable {
             if (account) {
                 account.balance = parseFloat(account.balance) + parseFloat(event.inserted.balance);
 
-                event.manager.update(Account.TABLE, account);
+                await event.manager.update(Account.TABLE, account);
             }
         }
     }
@@ -136,6 +136,7 @@ export default class Transaction implements IDatabaseTable {
 
                 if (account) {
                     account.balance = parseFloat(account.balance) + diff;
+                    await event.manager.update(Account.TABLE, account);
                 }
             }
         }
