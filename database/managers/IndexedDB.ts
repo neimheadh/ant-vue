@@ -47,7 +47,7 @@ export default class IndexedDB implements IDatabaseManager {
      * @param ctx Nuxt context. 
      * @param name Database name.
      */
-    constructor(public ctx: Context, public name: string, public version: number = VERSION) { }
+    constructor(public ctx: Context, public name: string, private debug = false, public version = VERSION) { }
 
     /**
      * Check if the plugin is initialized.
@@ -68,7 +68,7 @@ export default class IndexedDB implements IDatabaseManager {
     private _onDatabaseOpenError(evt: Event): void {
         const request = <IDBOpenDBRequest>evt.target;
 
-        console.log('[IndexedDB] Error opening database %s', request.result.name);
+        this.debug && console.log('[IndexedDB] Error opening database %s', request.result.name);
         this._idbOpenReject && this._idbOpenReject(evt);
     }
 
@@ -83,7 +83,7 @@ export default class IndexedDB implements IDatabaseManager {
 
         this._db = request.result;
 
-        console.log('[IndexedDB] Successfully open database %s (version: %s)', request.result.name, request.result.version);
+        this.debug && console.log('[IndexedDB] Successfully open database %s (version: %s)', request.result.name, request.result.version);
 
         tables.forEach(table => table.events?.dispatchEvent(new PostOpenEvent(this)));
         this._idbOpenResolve && this._idbOpenResolve();
@@ -101,11 +101,11 @@ export default class IndexedDB implements IDatabaseManager {
 
         tables.forEach(table => table.events?.dispatchEvent(new PreSchemaUpdateEvent(this)));
 
-        console.log('[IndexedDB] Upgrading database %s', db.name);
+        this.debug && console.log('[IndexedDB] Upgrading database %s', db.name);
 
         for (const table of Tables) {
             if (!db.objectStoreNames.contains(table.name)) {
-                console.log('[IndexedDB] Create store %s', table.name);
+                this.debug && console.log('[IndexedDB] Create store %s', table.name);
                 this._newStores.push(table.name);
             }
 
@@ -113,7 +113,7 @@ export default class IndexedDB implements IDatabaseManager {
                 ? request.transaction?.objectStore(table.name)
                 : db.createObjectStore(table.name, { keyPath: table.primary_key });
 
-            console.log('[IndexedDB] Initialize store %s', table.name);
+            this.debug && console.log('[IndexedDB] Initialize store %s', table.name);
 
             for (const index of table.indexes) {
                 const name = index.name ?? index.field;
@@ -162,7 +162,7 @@ export default class IndexedDB implements IDatabaseManager {
             return Promise.reject(`Table "${_table}" doesn't exists.`);
         }
 
-        console.log('[IndexedDB] Delete in store %s :', table.name, id);
+        this.debug && console.log('[IndexedDB] Delete in store %s :', table.name, id);
         table.events?.dispatchEvent(new PreDeleteEvent(this, { id }));
 
         const deleted = await this.get(table.name, id);
@@ -217,7 +217,7 @@ export default class IndexedDB implements IDatabaseManager {
                     : store.openCursor();
                 const result: any[] = [];
 
-                console.log('[IndexedDB] Load rows from storage %s', store.name);
+                this.debug && console.log('[IndexedDB] Load rows from storage %s', store.name);
 
                 request.onerror = reject;
                 request.onsuccess = (evt: Event) => {
@@ -234,7 +234,7 @@ export default class IndexedDB implements IDatabaseManager {
             } else {
                 const request = store.get(id);
 
-                console.log('[IndexedDB] Load row %s from storage %s', id, store.name);
+                this.debug && console.log('[IndexedDB] Load row %s from storage %s', id, store.name);
 
                 request.onerror = reject;
                 request.onsuccess = (evt) => {
@@ -260,7 +260,7 @@ export default class IndexedDB implements IDatabaseManager {
             return Promise.reject(`Table "${_table}" doesn't exists.`);
         }
 
-        console.log('[IndexedDB] Insert in store %s :', table.name, obj);
+        this.debug && console.log('[IndexedDB] Insert in store %s :', table.name, obj);
         table.events?.dispatchEvent(new PreInsertEvent(this, obj));
 
         return new Promise((resolve, reject) => {
@@ -324,7 +324,7 @@ export default class IndexedDB implements IDatabaseManager {
         if (process.browser && window) {
             const request = window.indexedDB.open(this.name, this.version);
 
-            console.log('[IndexedDB] Opening database %s', this.name);
+            this.debug && console.log('[IndexedDB] Opening database %s', this.name);
 
             return new Promise((resolve, reject) => {
                 this._idbOpenReject = reject;
@@ -352,7 +352,7 @@ export default class IndexedDB implements IDatabaseManager {
             return Promise.reject(`Table "${_table}" doesn't exists.`);
         }
 
-        console.log('[IndexedDB] Update in store %s :', table.name, obj);
+        this.debug && console.log('[IndexedDB] Update in store %s :', table.name, obj);
 
         const previous = table.primary_key && await this.get(table.name, obj[table.primary_key]);
         table.events?.dispatchEvent(new PreUpdateEvent(this, obj, previous));
