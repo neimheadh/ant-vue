@@ -1,0 +1,82 @@
+button {
+    background: $grey-80;
+    box-sizing: content-box;
+    border: 0 none;
+    overflow: hidden;
+    padding: 0.5em;
+    transition: background-color $transition-speed;
+
+    &:hover {
+        background: $grey-90;
+    }
+
+    &.clickable {
+        cursor: pointer;
+    }
+
+    &.bigger {
+        font-size: 1.5em;
+    }
+
+    &.faded {
+        opacity: .7;
+        transition: background-color $transition-speed, opacity $transition-speed;
+
+        &:hover {
+            opacity: 1;
+        }
+    }
+
+    &.inverted {
+        background: transparent;
+        color: $grey-20;
+        transition: color $transition-speed;
+
+        &:hover {
+            color: $black;
+        }
+
+        &.faded {
+            transition: color $transition-speed, opacity $transition-speed;
+        }
+
+        &.primary {
+            color: $primary-95;
+
+            &:hover {
+                color: $primary;
+            }
+        }
+
+        &.secondary {
+            color: $secondary-95;
+
+            &:hover {
+                color: $secondary;
+            }
+        }
+    }
+
+    &.primary {
+        background: $primary-95;
+        color: $white;
+
+        &:hover {
+            background: $primary;
+        }
+    }
+
+    &.secondary {
+        background: $secondary-95;
+        color: $white;
+
+        &:hover {
+            background: $secondary;
+        }
+    }
+
+    &.square {
+        height: 1em;
+        width: 1em;
+    }
+}

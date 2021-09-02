@@ -1,0 +1,39 @@
+.layout-menu {
+    height: 100vh;
+    left: 0;
+    position: fixed;
+    transition: background-color $transition-speed;
+    top: 0;
+    width: 100vw;
+
+    &.opened {
+        background: adjust-color($color: $black, $alpha: -0.3);
+
+        .btn-close {
+            margin-right: 10vw;
+        }
+        .content {
+            margin-left: 0;
+        }
+    }
+
+    .btn-close {
+        margin-right: 100vw;
+        position: fixed;
+        right: 10px;
+        top: 0;
+
+        &.faded {
+            transition: all $transition-speed;
+        }
+    }
+
+    .content {
+        background: $white;
+        height: 100vh;
+        margin-left: -90vw;
+        position: fixed;
+        transition: margin-left $transition-speed;
+        width: 90vw;
+    }
+}

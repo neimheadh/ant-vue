@@ -68,13 +68,13 @@ export default Vue.extend({
     methods: {
         load() {
             this.$db.get(this.table)
-                .catch(error => this.error = error)
-                .then(rows => this.rows = rows);
+                .catch((error: any) => this.error = error)
+                .then((rows: any) => this.rows = rows);
         },
 
         remove(row: any) {
             this.$db.delete(this.table, row[this.primaryKey])
-                .catch(error => this.error = error)
+                .catch((error: any) => this.error = error)
                 .then(() => this.load());
         },
 

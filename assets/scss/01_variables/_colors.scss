@@ -1,0 +1,44 @@
+$color1: #F95A0E;
+$color2: #A5653D;
+$color3: #69645B;
+$color4: #70888C;
+$color5: #6499AB;
+
+$primary: $color1;
+$secondary: $color2;
+
+$black: #000;
+$white: #fff;
+
+$grey-10: adjust-color($color: $white, $lightness: -90%);
+$grey-20: adjust-color($color: $white, $lightness: -80%);
+$grey-30: adjust-color($color: $white, $lightness: -70%);
+$grey-40: adjust-color($color: $white, $lightness: -60%);
+$grey-50: adjust-color($color: $white, $lightness: -50%);
+$grey-60: adjust-color($color: $white, $lightness: -40%);
+$grey-70: adjust-color($color: $white, $lightness: -30%);
+$grey-80: adjust-color($color: $white, $lightness: -20%);
+$grey-90: adjust-color($color: $white, $lightness: -10%);
+$grey-95: adjust-color($color: $white, $lightness: -5%);
+
+$primary-10: adjust_color($color: $primary, $lightness: -90%);
+$primary-20: adjust_color($color: $primary, $lightness: -80%);
+$primary-30: adjust_color($color: $primary, $lightness: -70%);
+$primary-40: adjust_color($color: $primary, $lightness: -60%);
+$primary-50: adjust_color($color: $primary, $lightness: -50%);
+$primary-60: adjust_color($color: $primary, $lightness: -40%);
+$primary-70: adjust_color($color: $primary, $lightness: -30%);
+$primary-80: adjust_color($color: $primary, $lightness: -20%);
+$primary-90: adjust_color($color: $primary, $lightness: -10%);
+$primary-95: adjust_color($color: $primary, $lightness: -5%);
+
+$secondary-10: adjust_color($color: $secondary, $lightness: -90%);
+$secondary-20: adjust_color($color: $secondary, $lightness: -80%);
+$secondary-30: adjust_color($color: $secondary, $lightness: -70%);
+$secondary-40: adjust_color($color: $secondary, $lightness: -60%);
+$secondary-50: adjust_color($color: $secondary, $lightness: -50%);
+$secondary-60: adjust_color($color: $secondary, $lightness: -40%);
+$secondary-70: adjust_color($color: $secondary, $lightness: -30%);
+$secondary-80: adjust_color($color: $secondary, $lightness: -20%);
+$secondary-90: adjust_color($color: $secondary, $lightness: -10%);
+$secondary-95: adjust_color($color: $secondary, $lightness: -5%);

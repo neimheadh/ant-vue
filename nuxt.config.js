@@ -3,6 +3,11 @@ import fr from './translations/messages.fr';
 export default {
     buildModules: [
         '@nuxt/typescript-build',
+        ['@nuxtjs/fontawesome', {
+            icons: {
+                solid: true,
+            }
+        }],
     ],
 
     components: {
@@ -12,6 +17,10 @@ export default {
             '~/components/organisms',
         ],
     },
+
+    css: [
+        '~/assets/scss/main.scss',
+    ],
 
     modules: [
         ['@nuxtjs/i18n', {
