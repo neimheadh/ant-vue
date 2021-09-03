@@ -1,5 +1,5 @@
 <template>
-    <nuxt-link :to="href" :title="title"><slot /></nuxt-link>
+    <nuxt-link :to="href" :title="title" @click.native="$emit('click', $event)"><slot /></nuxt-link>
 </template>
 
 <script lang="ts">

@@ -1,14 +1,14 @@
 <template>
     <div ref="layout" class="layout-menu" @click="close">
-        <div class="content" @click="$event.stopPropagation()">
-            <MenuLink to="/">Home</MenuLink>
-            <MenuLink to="/accounts">Accounts</MenuLink>
-            <Button class="btn-close" @click="close" clickable bigger square inverted faded>
-                <font-awesome-icon icon="times" />
-            </Button>
+        <div class="container" @click="$event.stopPropagation()">
+            <div class="content">
+                <MenuLink to="/" @click="close">Home</MenuLink>
+                <MenuLink to="/accounts" @click="close">Accounts</MenuLink>
+            </div>
         </div>
-        <Button class="btn-open" @click="toggle" clickable bigger square inverted>
-            <font-awesome-icon icon="bars" />
+        <Button class="btn-open" @click="toggle" bigger clickable faded primary rounded square>
+            <font-awesome-icon icon="bars" class="fa-bars" />
+            <font-awesome-icon icon="times" class="fa-times" />
         </Button>
     </div>
 </template>
@@ -22,7 +22,7 @@ export default Vue.extend({
          */
         close(evt: Event) {
             const layout = <HTMLDivElement> this.$refs.layout;
-
+            
             evt.stopPropagation();
 
             layout.classList.remove('opened');

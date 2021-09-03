@@ -1,5 +1,5 @@
 <template>
-    <Link class="menu-link" :href="to"><slot /></Link>
+    <Link class="menu-link" :href="to" @click="$emit('click', $event)"><slot /></Link>
 </template>
 
 <script lang="ts">

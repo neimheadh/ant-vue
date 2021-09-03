@@ -1,8 +1,8 @@
 import Vue from 'vue';
-import IDatabaseSGBD from './database/IDatabaseSGBD';
+import IDatabaseManager from './database/IDatabaseManager';
 
 declare module 'vue/types/vue' {
     interface Vue {
-        $db: IDatabaseSGBD;
+        $db: IDatabaseManager;
     }
 }

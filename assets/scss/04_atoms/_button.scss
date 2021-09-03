@@ -2,7 +2,6 @@ button {
     background: $grey-80;
     box-sizing: content-box;
     border: 0 none;
-    overflow: hidden;
     padding: 0.5em;
     transition: background-color $transition-speed;
 
@@ -66,6 +65,10 @@ button {
         }
     }
 
+    &.rounded {
+        border-radius: 10px;
+    }
+
     &.secondary {
         background: $secondary-95;
         color: $white;
@@ -77,6 +80,7 @@ button {
 
     &.square {
         height: 1em;
+        text-align: center;
         width: 1em;
     }
 }

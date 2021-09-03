@@ -9,31 +9,44 @@
     &.opened {
         background: adjust-color($color: $black, $alpha: -0.3);
 
-        .btn-close {
-            margin-right: 10vw;
+        .btn-open {
+            .fa-bars {
+                display: none;
+            }
+
+            .fa-times {
+                display: inline-block;
+            }
         }
-        .content {
-            margin-left: 0;
+
+        .container {
+            margin-right: 0;
         }
     }
 
-    .btn-close {
-        margin-right: 100vw;
+    .btn-open {
         position: fixed;
         right: 10px;
-        top: 0;
+        top: 10px;
 
-        &.faded {
-            transition: all $transition-speed;
+        .fa-times {
+            display: none;
         }
+    }
+
+    .container {
+        background: $white;
+        height: 100vh;
+        margin-right: -90vw;
+        position: fixed;
+        right: 0;
+        transition: margin-right $transition-speed;
+        top: 0;
+        width: 90vw;
     }
 
     .content {
-        background: $white;
+        margin-top: 2em;
         height: 100vh;
-        margin-left: -90vw;
-        position: fixed;
-        transition: margin-left $transition-speed;
-        width: 90vw;
     }
 }

@@ -17,6 +17,7 @@ export default Vue.extend({
       this.faded && classList.push('faded');
       this.inverted && classList.push('inverted');
       this.primary && classList.push('primary');
+      this.rounded && classList.push('rounded');
       this.secondary && classList.push('secondary');
       this.square && classList.push('square');
 
@@ -56,6 +57,13 @@ export default Vue.extend({
      * Primary modifier.
      */
     primary: {
+      type: [Boolean],
+    },
+
+    /**
+     * Rounded modifier.
+     */
+    rounded: {
       type: [Boolean],
     },
 
