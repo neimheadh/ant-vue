@@ -1,9 +1,8 @@
 <template>
-    <header>
-        <div class="container">
-            <Title v-if="title" :level="1">{{ title }}</Title>
-        </div>
-    </header>
+    <div>
+        <LayoutHeader :title="title" />
+        <slot />
+    </div>
 </template>
 
 <script lang="ts">
@@ -13,7 +12,9 @@ export default Vue.extend({
         /**
          * Page title.
          */
-        title: {type: [String]},
+        title: {
+            type: [String],
+        },
     }
 })
 </script>

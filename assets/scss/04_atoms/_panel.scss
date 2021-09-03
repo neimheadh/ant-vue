@@ -1,0 +1,19 @@
+.panel {
+    animation-delay: 1s;
+    animation-duration: 5s;
+    animation-name: shake;
+    animation-iteration-count: infinite;
+    animation-play-state: paused;
+    animation-timing-function: ease-out;
+
+    background: $white;
+    border-radius: 10px;
+    margin: 0 $margin-little $margin-little $margin-little;
+    padding: 20px;
+    transition: box-shadow $transition-speed;
+
+    &.focused {
+        animation-play-state: running;        
+        box-shadow: 3px 3px 5px adjust-color($color: $color3, $alpha: -.3);
+    }
+}

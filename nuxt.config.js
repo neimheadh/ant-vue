@@ -1,5 +1,3 @@
-import fr from './translations/messages.fr';
-
 export default {
     buildModules: [
         '@nuxt/typescript-build',
@@ -24,14 +22,19 @@ export default {
 
     modules: [
         ['@nuxtjs/i18n', {
-            locales: ['en', 'fr'],
+            langDir: '~/translations',
+            locales: [
+                { code: 'en', iso: 'en-US', file: 'en.js' },
+                { code: 'fr', iso: 'fr-FR', file: 'fr.js' },
+            ],
             defaultLocale: 'en',
+            detectBrowserLanguage: {
+                useCookie: true,
+                cookie: 'ant_i18n',
+            },
+            strategy: 'no_prefix',
             vueI18n: { 
                 fallbackLocale: 'en',
-                messages: {
-                    en: require('./translations/messages.en'),
-                    fr: require('./translations/messages.fr'),
-                }
             },
         }],
     ],

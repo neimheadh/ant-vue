@@ -1,14 +1,15 @@
 $color1: #F95A0E;
 $color2: #A5653D;
 $color3: #69645B;
-$color4: #70888C;
-$color5: #6499AB;
-
-$primary: $color1;
-$secondary: $color2;
+$color4: #F8E4C1;
+$color5: adjust-color($color: $color4, $lightness: +10%);
 
 $black: #000;
 $white: #fff;
+
+$primary: $color1;
+$secondary: $color2;
+$background: $color4;
 
 $grey-10: adjust-color($color: $white, $lightness: -90%);
 $grey-20: adjust-color($color: $white, $lightness: -80%);

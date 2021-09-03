@@ -1,7 +1,6 @@
 <template>
-  <div>
-    <LayoutHeader />
-    <LayoutMenu />
-    <nuxt />
-  </div>
+    <div>
+        <LayoutMenu />
+        <nuxt />
+    </div>
 </template>

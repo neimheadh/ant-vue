@@ -1,5 +1,16 @@
 header {
-    box-sizing: border-box;
-    height: 1.5em;
-    padding-left: 1.5em;
+    height: $header-height;
+    margin-bottom: $margin-little;
+
+    .container {
+        background: $color5;
+        box-sizing: border-box;
+        height: $header-height;
+        left: 0;
+        padding-left: $header-height;
+        position: fixed;
+        top: 0;
+        width: 100vw;
+        z-index: 10;
+    }
 }
