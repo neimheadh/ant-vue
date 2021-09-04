@@ -1,19 +1,27 @@
 .panel {
-    animation-delay: 1s;
-    animation-duration: 5s;
-    animation-name: shake;
-    animation-iteration-count: infinite;
-    animation-play-state: paused;
-    animation-timing-function: ease-out;
-
     background: $white;
     border-radius: 10px;
-    margin: 0 $margin-little $margin-little $margin-little;
+    box-sizing: border-box;
+    margin: 0 auto $margin-little auto;
     padding: 20px;
-    transition: box-shadow $transition-speed;
+    width: 90vw;
+    transition: all $transition-speed;
 
     &.focused {
-        animation-play-state: running;        
-        box-shadow: 3px 3px 5px adjust-color($color: $color3, $alpha: -.3);
+        &:not(.unfocusing) {
+            left: 0.5vw !important;
+            top: $margin-normal !important;
+        }
+        position: fixed;
+        width: 99vw;
+        z-index: 40;
+
+        &.unfocusing {
+            width: 90vw;
+        }
     }
+}
+
+.panel-zone {
+    margin-bottom: $margin-little;
 }

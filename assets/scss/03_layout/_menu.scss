@@ -13,33 +13,19 @@
         }
     }
 
-    .filler {
+    .container {
+        background: $color5;
         height: 100vh;
-        left: 0;
-        margin-left: -100vw;
+        margin-left: -80vw;
         position: fixed;
-        transition: background-color $transition-speed;
+        left: 0;
+        transition: margin $transition-speed;
         top: 0;
-        width: 100vw;
-        z-index: 20;
+        width: 80vw;
+        z-index: 30;
 
         &.opened {
-            background: adjust-color($color: $black, $alpha: -0.3);
             margin-left: 0;
-            .container {
-                margin-left: 0;
-            }
-        }
-
-        .container {
-            background: $color5;
-            height: 100vh;
-            margin-left: -80vw;
-            position: fixed;
-            left: 0;
-            transition: margin $transition-speed;
-            top: 0;
-            width: 80vw;
         }
 
         .content {

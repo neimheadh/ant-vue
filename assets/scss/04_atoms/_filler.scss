@@ -1,0 +1,16 @@
+.filler {
+    height: 100vh;
+    left: 0;
+    pointer-events: none;
+    position: fixed;
+    transition: background-color $transition-speed;
+    top: 0;
+    width: 100vw;
+    z-index: 20;
+
+    &.visible {
+        background: adjust-color($color: $black, $alpha: -0.3);
+        margin-left: 0;
+        pointer-events: all;
+    }
+}

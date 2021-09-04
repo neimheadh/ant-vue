@@ -41,6 +41,7 @@ export default {
 
     plugins: [
         { src: '~/plugins/database.ts' },
+        { src: '~/plugins/events.ts' },
     ],
 
     store: true,

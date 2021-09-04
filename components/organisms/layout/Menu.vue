@@ -1,11 +1,9 @@
 <template>
     <div class="menu">
-        <div ref="filler" class="filler" @click="close">
-            <div class="container" @click="$event.stopPropagation()">
-                <div class="content">
-                    <MenuLink to="/" @click="close">{{ $t('Home') }}</MenuLink>
-                    <MenuLink to="/accounts" @click="close">{{ $t('Accounts') }}</MenuLink>
-                </div>
+        <div class="container" ref="container">
+            <div class="content">
+                <MenuLink to="/" @click="close">{{ $t('Home') }}</MenuLink>
+                <MenuLink to="/accounts" @click="close">{{ $t('Accounts') }}</MenuLink>
             </div>
         </div>
         <Button class="btn-open" @click="toggle" bigger clickable primary square>
@@ -22,19 +20,44 @@ export default Vue.extend({
          * Close menu.
          */
         close(evt: Event) {
-            const filler = <HTMLDivElement> this.$refs.filler;
-            filler.classList.remove('opened');
+            const container = <HTMLDivElement> this.$refs.container;
+
+            evt.stopPropagation();
+            
+            container.classList.remove('opened');
+            this.$events.dispatchEvent(new Event('filler.close'));
         },
         /**
          * Toggle menu.
          */
         toggle(evt: Event) {
-            const filler = <HTMLDivElement> this.$refs.filler;
+            const container = <HTMLDivElement> this.$refs.container;
+
+            if (container.classList.contains('opened')) {
+                this.close(evt);
+            } else {
+                this.open(evt);
+            }
+        },
+        /**
+         * Open menu.
+         */
+        open(evt: Event) {
+            const container = <HTMLDivElement> this.$refs.container;
 
             evt.stopPropagation();
 
-            filler.classList.toggle('opened');
-        },
+            container.classList.toggle('opened');
+            this.$events.dispatchEvent(new Event('filler.open'));
+        }
+    },
+
+    destroyed() {
+        this.$events.removeEventListener('filler.closed', this.close);
+    },
+
+    mounted() {
+        this.$events.addEventListener('filler.closed', this.close);
     },
 })
 </script>

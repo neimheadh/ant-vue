@@ -1,5 +1,6 @@
 <template>
     <div>
+        <Filler />
         <LayoutMenu />
         <nuxt />
     </div>
