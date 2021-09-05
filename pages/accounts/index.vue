@@ -1,11 +1,6 @@
 <template>
     <LayoutPage :title="$t('Accounts')">
-        <Panel focusable>Account 1</Panel>
-        <Panel focusable>Account 2</Panel>
-        <Panel focusable>Account 3</Panel>
-        <Panel focusable>Account 4</Panel>
-        <Panel focusable>Account 5</Panel>
-        <Panel focusable>Account 6</Panel>
+        <AccountPanel v-for="account in accounts" :key="account.uuid" :account="account" />
     </LayoutPage>
 </template>
 
@@ -16,6 +11,13 @@ export default Vue.extend({
     data: () => ({
         accounts: <any[]> [],
     }),
+    methods: {
+        remove(account: any) {
+            this.accounts = this.accounts.filter((candidate: any) => {
+                return candidate.uuid !== account.uuid;
+            });
+        },
+    },
     async mounted() {
         this.accounts = await this.$db.get(Account.TABLE);
     },

@@ -1,0 +1,15 @@
+.actions {
+    bottom: $margin-little;
+    position: fixed;
+    right: $margin-little;
+    z-index: 21;
+
+    ul {
+        display: flex;
+
+        li {
+            list-style: none;
+            margin-left: $margin-little;
+        }
+    }
+}

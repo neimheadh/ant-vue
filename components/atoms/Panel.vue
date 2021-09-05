@@ -6,6 +6,7 @@
 
 <script lang="ts">
 import Vue from 'vue'
+import getTransitionDuration from '~/helpers/getTransitionDuration';
 export default Vue.extend({
     data: () => ({
         focusing: <NodeJS.Timeout | null> null,
@@ -34,38 +35,27 @@ export default Vue.extend({
                 return this.unfocusTime;
             }
 
-            const styles = getComputedStyle(panel);
-            const duration = styles.transitionDuration ?? 0;
-            const rSec = new RegExp('([0-9\.]+)\s*s');
-            const rMs = new RegExp('([0-9\.]+)\s*ms');
-            let match;
-
-            if (match = rSec.exec(duration)) {
-                return parseFloat(match[1]) * 1000;
-            }
-
-            if (match = rMs.exec(duration)) {
-                return parseFloat(match[1]);
-            }
-
-            return parseFloat(duration);
+            return getTransitionDuration(panel) ?? 0;
         },
         
         /**
          * Handle mousedown event.
          */
-        mousedown(evt: Event): void {
+        mousedown(evt?: Event): void {
             const panel = <HTMLDivElement> this.$refs.panel;
+            evt?.stopPropagation();
 
             panel.style.left = `${panel.offsetLeft}px`;
             panel.style.top = `${panel.offsetTop}px`;
-            this.focusable && this.focus(evt);
+            this.focusable && this.focus();
         },
 
         /**
          * Handle mousedown event.
          */
-        mouseup(evt: Event): void {
+        mouseup(evt?: Event): void {
+            evt?.stopPropagation();
+
             this.focusing && clearTimeout(this.focusing);
             this.focusing = null;
         },
@@ -73,9 +63,7 @@ export default Vue.extend({
         /**
          * Focus the element after a waiting time.
          */
-        focus(evt: Event): void {
-            evt.stopPropagation();
-
+        focus(): void {
             this.unfocusing && clearTimeout(this.unfocusing);
             this.unfocusing = null;
 
@@ -92,7 +80,7 @@ export default Vue.extend({
                 zone.style.width = `${panel.clientWidth}px`;
                 panel.after(zone);
 
-                this.$emit('focus', evt);
+                this.$emit('focus');
                 this.$events.addEventListener('filler.closed', this.unfocus);
                 this.$events.dispatchEvent(new Event('filler.open'));
             }, this.focusTime);
@@ -101,7 +89,7 @@ export default Vue.extend({
         /**
          * Unfocus an element.
          */
-        unfocus(evt: Event): void {
+        unfocus(): Promise<void> {
             const panel = <HTMLDivElement> this.$refs.panel;
 
             this.focusing && clearTimeout(this.focusing);
@@ -110,16 +98,22 @@ export default Vue.extend({
             this.$events.removeEventListener('filler.closed', this.unfocus);
             
             if (panel && panel.classList.contains('focused')) {
-                this.unfocusing = setTimeout(() => {
-                    if (panel.nextElementSibling?.classList.contains('panel-zone')) {
-                        panel.nextElementSibling.remove();
-                    }
-                    panel.classList.remove('focused');
-                    panel.classList.remove('unfocusing');
-                }, this.getUnfocusTime());
-                panel.classList.add('unfocusing');
-                this.$emit('unfocus', evt);
+                return new Promise(resolve => {
+                    this.unfocusing = setTimeout(() => {
+                        if (panel.nextElementSibling?.classList.contains('panel-zone')) {
+                            panel.nextElementSibling.remove();
+                        }
+                        panel.classList.remove('focused');
+                        panel.classList.remove('unfocusing');
+                        this.$events.dispatchEvent(new Event('filler.close'));
+                        resolve();
+                    }, this.getUnfocusTime());
+                    panel.classList.add('unfocusing');
+                    this.$emit('unfocus');
+                });
             }
+
+            return Promise.resolve();
         },
     },
 

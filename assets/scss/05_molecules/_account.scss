@@ -1,0 +1,12 @@
+.account-panel {
+    transition: opacity $transition-speed-slow, all $transition-speed;
+
+    .price {
+        float: right;
+        margin-top: -$margin-normal - 10;
+    }
+
+    &.deleted {
+        opacity: 0;
+    }
+}

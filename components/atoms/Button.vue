@@ -3,7 +3,8 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
+import Vue from 'vue';
+
 export default Vue.extend({
   methods: {
     /**
@@ -16,7 +17,9 @@ export default Vue.extend({
       this.clickable && classList.push('clickable');
       this.faded && classList.push('faded');
       this.inverted && classList.push('inverted');
+      this.padded && classList.push('padded');
       this.primary && classList.push('primary');
+      this.round && classList.push('round');
       this.rounded && classList.push('rounded');
       this.secondary && classList.push('secondary');
       this.square && classList.push('square');
@@ -28,58 +31,52 @@ export default Vue.extend({
     /**
      * Bigger modifier.
      */
-    bigger: {
-      type: [Boolean],
-    },
+    bigger: Boolean,
 
     /**
      * Clickable modifier.
      */
-    clickable: {
-      type: [Boolean],
-    },
+    clickable: Boolean,
 
     /**
      * Faded modifier.
      */
-    faded: {
-      type: [Boolean],
-    },
+    faded: Boolean,
 
     /**
      * Inverted modifier.
      */
-    inverted: {
-      type: [Boolean],
-    },
+    inverted: Boolean,
+
+    /**
+     * Add padding to the button.
+     */
+    padded: Boolean,
 
     /**
      * Primary modifier.
      */
-    primary: {
-      type: [Boolean],
-    },
+    primary: Boolean,
+
+    /**
+     * Makes the button round.
+     */
+    round: Boolean,
 
     /**
      * Rounded modifier.
      */
-    rounded: {
-      type: [Boolean],
-    },
+    rounded: Boolean,
 
     /**
      * Secondary modifier.
      */
-    secondary: {
-      type: [Boolean],
-    },
+    secondary: Boolean,
 
     /**
      * Square modifier.
      */
-    square: {
-      type: [Boolean],
-    },
+    square: Boolean,
 
     /**
      * Button type.
