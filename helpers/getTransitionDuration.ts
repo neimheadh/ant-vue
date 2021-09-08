@@ -6,7 +6,7 @@
  * 
  * @returns The transition duration in milliseconds, if defined. 
  */
-export default (elt: HTMLElement, property: string = 'all'): number | void => {
+export default (elt: HTMLElement, property: string = 'all'): number  => {
     const styles = getComputedStyle(elt);
     const {transitionProperty, transitionDuration} = styles;
     const properties = transitionProperty.split(',').map(str => str.trim());
@@ -37,4 +37,6 @@ export default (elt: HTMLElement, property: string = 'all'): number | void => {
     if (duration_all !== undefined) {
         return duration_all;
     }
+
+    return 0;
 };

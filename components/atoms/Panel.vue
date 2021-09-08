@@ -7,6 +7,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import getTransitionDuration from '~/helpers/getTransitionDuration';
+import { Action, ActionType } from '../organisms/layout/Actions.vue';
 export default Vue.extend({
     data: () => ({
         focusing: <NodeJS.Timeout | null> null,
@@ -14,6 +15,18 @@ export default Vue.extend({
     }),
 
     methods: {
+        /**
+         * 
+         */
+        actions(): Action[] {
+            const actions: Action[] = [];
+
+            this.deletable && actions.push({type: ActionType.Delete, callback: this.delete});
+            this.editable && actions.push({type: ActionType.Edit, callback: this.edit});
+
+            return actions;
+        },
+
         /**
          * Get panel class list.
          */
@@ -26,6 +39,32 @@ export default Vue.extend({
         },
 
         /**
+         * Delete the panel.
+         */
+        async delete(evt?: Event): Promise<Event | void> {
+            const panel = <HTMLDivElement> this.$refs.panel;
+            const transition = getTransitionDuration(panel, 'opacity');
+            const promises = [
+                this.unfocus(),
+                new Promise(resolve => setTimeout(resolve, transition)),
+            ];
+
+            panel.classList.add('deleted');
+            await Promise.all(promises);
+            this.$emit('delete', evt);
+            this.$el.remove();
+
+            return Promise.resolve(evt);
+        },
+
+        /**
+         * Edit the panel.
+         */
+        edit(evt?: Event) {
+            this.$emit('edit', evt);
+        },
+
+        /**
          * Get the unfocus time.
          */
         getUnfocusTime(): number {
@@ -35,7 +74,7 @@ export default Vue.extend({
                 return this.unfocusTime;
             }
 
-            return getTransitionDuration(panel) ?? 0;
+            return getTransitionDuration(panel);
         },
         
         /**
@@ -43,6 +82,8 @@ export default Vue.extend({
          */
         mousedown(evt?: Event): void {
             const panel = <HTMLDivElement> this.$refs.panel;
+            this.$emit('mousedown', evt);
+
             evt?.stopPropagation();
 
             panel.style.left = `${panel.offsetLeft}px`;
@@ -55,6 +96,7 @@ export default Vue.extend({
          */
         mouseup(evt?: Event): void {
             evt?.stopPropagation();
+            this.$emit('mouseup', evt);
 
             this.focusing && clearTimeout(this.focusing);
             this.focusing = null;
@@ -69,9 +111,8 @@ export default Vue.extend({
 
             this.focusing = setTimeout(() => {
                 const panel = <HTMLDivElement> this.$refs.panel;
-                const height = panel.clientHeight;
-                const width = panel.clientWidth;
                 const zone = document.createElement('div');
+                const actions = this.actions();
 
                 panel.classList.add('focused');
 
@@ -79,6 +120,8 @@ export default Vue.extend({
                 zone.style.height = `${panel.clientHeight}px`;
                 zone.style.width = `${panel.clientWidth}px`;
                 panel.after(zone);
+
+                this.$events.dispatchEvent(new CustomEvent('actions.change', {detail: actions}));
 
                 this.$emit('focus');
                 this.$events.addEventListener('filler.closed', this.unfocus);
@@ -106,10 +149,13 @@ export default Vue.extend({
                         panel.classList.remove('focused');
                         panel.classList.remove('unfocusing');
                         this.$events.dispatchEvent(new Event('filler.close'));
+                        this.$emit('unfocus');
                         resolve();
                     }, this.getUnfocusTime());
+
+                    this.$events.dispatchEvent(new Event('actions.unchange'));
                     panel.classList.add('unfocusing');
-                    this.$emit('unfocus');
+                    this.$emit('unfocusing');
                 });
             }
 
@@ -118,6 +164,16 @@ export default Vue.extend({
     },
 
     props: {
+        /**
+         * Makes the panel deletable.
+         */
+        deletable: Boolean,
+
+        /**
+         * Makes the panel editable.
+         */
+        editable: Boolean,
+
         /**
          * Make the panel focusable.
          */

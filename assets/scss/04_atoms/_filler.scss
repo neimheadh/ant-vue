@@ -8,9 +8,29 @@
     width: 100vw;
     z-index: 20;
 
+    &::after {
+        color: $white;
+        content: "×";
+        cursor: pointer;
+        font-size: 3em;
+        opacity: 0;
+        position: fixed;
+        right: $margin-normal;
+        transition: all $transition-speed;
+        top: -0.2em;
+    }
+
     &.visible {
         background: adjust-color($color: $black, $alpha: -0.3);
         margin-left: 0;
         pointer-events: all;
+
+        &::after {
+            opacity: .7;
+
+            &:hover {
+                opacity: 1;
+            }
+        }
     }
 }

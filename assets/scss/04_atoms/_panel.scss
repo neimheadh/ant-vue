@@ -10,7 +10,7 @@
     &.focused {
         &:not(.unfocusing) {
             left: 0.5vw !important;
-            top: $margin-normal !important;
+            top: $header-height !important;
         }
         position: fixed;
         width: 99vw;
