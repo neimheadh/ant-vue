@@ -10,21 +10,45 @@ import getTransitionDuration from '~/helpers/getTransitionDuration';
 import { Action, ActionType } from '../organisms/layout/Actions.vue';
 export default Vue.extend({
     data: () => ({
+        editing: false,
         focusing: <NodeJS.Timeout | null> null,
         unfocusing: <NodeJS.Timeout | null> null,
     }),
 
     methods: {
         /**
-         * 
+         * Get panel actions.
          */
         actions(): Action[] {
             const actions: Action[] = [];
 
-            this.deletable && actions.push({type: ActionType.Delete, callback: this.delete});
-            this.editable && actions.push({type: ActionType.Edit, callback: this.edit});
+            if (this.editing) {
+                this.editable && actions.push({type: ActionType.Cancel, callback: this.cancel});
+                this.editable && actions.push({type: ActionType.Validate, callback: this.change});
+            } else {
+                this.deletable && actions.push({type: ActionType.Delete, callback: this.delete});
+                this.editable && actions.push({type: ActionType.Edit, callback: this.edit});
+            }
 
             return actions;
+        },
+
+        /**
+         * Cancel change action.
+         */
+        cancel(evt?: Event): void {
+            this.editing = false;
+            this.$events.dispatchEvent(new Event('actions.unchange'));
+            this.$emit('cancel-edit', evt);
+        },
+
+        /**
+         * Change the panel content.
+         */
+        change(evt?: Event): void {
+            this.editing = false;
+            this.$events.dispatchEvent(new Event('actions.unchange'));
+            this.$emit('change', evt);
         },
 
         /**
@@ -61,6 +85,8 @@ export default Vue.extend({
          * Edit the panel.
          */
         edit(evt?: Event) {
+            this.editing = true;
+            this.$events.dispatchEvent(new CustomEvent('actions.change', {detail: this.actions()}));
             this.$emit('edit', evt);
         },
 
@@ -88,7 +114,7 @@ export default Vue.extend({
 
             panel.style.left = `${panel.offsetLeft}px`;
             panel.style.top = `${panel.offsetTop}px`;
-            this.focusable && this.focus();
+            this.focusable && !panel.classList.contains('focused') && this.focus();
         },
 
         /**
@@ -154,6 +180,8 @@ export default Vue.extend({
                     }, this.getUnfocusTime());
 
                     this.$events.dispatchEvent(new Event('actions.unchange'));
+                    this.editing && this.$events.dispatchEvent(new Event('actions.unchange'));
+                    this.editing = false;
                     panel.classList.add('unfocusing');
                     this.$emit('unfocusing');
                 });

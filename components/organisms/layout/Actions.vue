@@ -3,13 +3,23 @@
         <ul v-if="actions.length">
             <template v-for="(action, index) in actions[0]">
                 <li v-if="action.type === ActionType.Edit" :key="`action.${index}`">
-                    <Button @click="action.callback" class="color-success" bigger padded round>
+                    <Button @click="action.callback" class="color-primary" bigger padded round>
                         <font-awesome-icon icon="pencil-alt" />
                     </Button>
                 </li>
                 <li v-else-if="action.type === ActionType.Delete" :key="`action.${index}`">
-                    <Button @click="action.callback" class="color-danger" bigger padded round>
+                    <Button @click="action.callback" class="color-secondary" bigger padded round>
                         <font-awesome-icon icon="trash" />
+                    </Button>
+                </li>
+                <li v-else-if="action.type === ActionType.Validate" :key="`action.${index}`">
+                    <Button @click="action.callback" class="color-success" bigger padded round>
+                        <font-awesome-icon icon="check" />
+                    </Button>
+                </li>
+                <li v-else-if="action.type === ActionType.Cancel" :key="`action.${index}`">
+                    <Button @click="action.callback" class="color-danger" bigger padded round>
+                        <font-awesome-icon icon="times" />
                     </Button>
                 </li>
             </template>
@@ -26,8 +36,10 @@ import Vue from 'vue';
 export enum ActionType {
     Default = 0,
 
-    Edit,
+    Cancel,
     Delete,
+    Edit,
+    Validate,
 }
 
 /**

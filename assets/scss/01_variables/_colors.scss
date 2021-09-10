@@ -13,6 +13,9 @@ $primary: $color1;
 $secondary: $color2;
 $background: $color4;
 
+$primary-content-color: $white;
+$secondary-content-color: $white;
+
 $grey-10: adjust-color($color: $white, $lightness: -90%);
 $grey-20: adjust-color($color: $white, $lightness: -80%);
 $grey-30: adjust-color($color: $white, $lightness: -70%);
@@ -45,3 +48,8 @@ $secondary-70: adjust_color($color: $secondary, $lightness: -30%);
 $secondary-80: adjust_color($color: $secondary, $lightness: -20%);
 $secondary-90: adjust_color($color: $secondary, $lightness: -10%);
 $secondary-95: adjust_color($color: $secondary, $lightness: -5%);
+
+:root {
+    --primary-color: $primary;
+    --secondary-color: $secondary;
+}

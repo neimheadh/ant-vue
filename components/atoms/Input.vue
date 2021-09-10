@@ -1,11 +1,13 @@
 <template>
   <input
+    ref="input"
+
     :type="type" 
     :placeholder="placeholder"
     :step="type === InputType.number && step"
 
     v-bind:value="value"
-    v-on:input="$emit('input', $event)"
+    v-on:input="$emit('input', $event.target.value)"
   />
 </template>
 
@@ -47,6 +49,22 @@ export default Vue.extend({
   data: () => ({
     InputType,
   }),
+  methods: {
+    /**
+     * Focus the input element.
+     */
+    focus(): void {
+        const input = <HTMLInputElement> this.$refs.input;
+        input.focus();
+    },
+    /**
+     * Select the input content.
+     */
+    select(): void {
+        const input = <HTMLInputElement> this.$refs.input;
+        input.select();
+    },
+},
   props: {
     /**
      * The input type.
@@ -77,8 +95,9 @@ export default Vue.extend({
      * Number type step.
      */
     step: {
+      default: 0.01,
       validator: value => {
-        return typeof value === 'number' || value === "any";
+        return (typeof value === 'number') || value === "any";
       }
     }
   }

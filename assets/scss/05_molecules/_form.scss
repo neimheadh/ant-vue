@@ -1,0 +1,22 @@
+.form-input, .form-select {
+    display: block;
+    margin-bottom: $margin-normal;
+    position: relative;
+
+    &:focus-within {
+        span {
+            color: $primary;
+        }
+    }
+
+    span {
+        background: $white;
+        display: block;
+        font-size: .8em;
+        margin-left: $margin-tiny;
+        margin-top: -.8em;
+        padding-left: $margin-tiny;
+        padding-right: $margin-tiny;
+        position: absolute;
+    }
+}
