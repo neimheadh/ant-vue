@@ -1,5 +1,13 @@
 <template>
-    <div :class="classes()" ref="panel" @mousedown="mousedown" @mouseup="mouseup">
+    <div 
+        :class="classes()" 
+
+        @click="clickeable && $emit('click', $event)"
+        @mousedown="mousedown" 
+        @mouseup="mouseup"
+
+        ref="panel" 
+    >
         <slot />
     </div>
 </template>
@@ -57,7 +65,10 @@ export default Vue.extend({
         classes(): string {
             const classes: string[] = ['panel'];
 
+            this.clickeable && classes.push('clickeable');
+            this.deletable && classes.push('deleteable');
             this.focused && classes.push('focused');
+            this.editable && classes.push('editeable');
 
             return classes.join(' ');
         },
@@ -192,6 +203,11 @@ export default Vue.extend({
     },
 
     props: {
+        /**
+         * Makes the panel clickeable.
+         */
+        clickeable: Boolean,
+
         /**
          * Makes the panel deletable.
          */

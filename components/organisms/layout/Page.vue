@@ -1,6 +1,6 @@
 <template>
     <div>
-        <LayoutHeader :title="title" />
+        <LayoutHeader :previous="previous" :title="title" />
         <slot />
     </div>
 </template>
@@ -10,11 +10,13 @@ import Vue from 'vue'
 export default Vue.extend({
     props: {
         /**
+         * Previous page.
+         */
+        previous: String,
+        /**
          * Page title.
          */
-        title: {
-            type: [String],
-        },
+        title: String,
     }
 })
 </script>

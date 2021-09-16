@@ -1,5 +1,6 @@
 import { Context } from "@nuxt/types";
 import { default as Tables, getTable } from '~/database/tables';
+import DatabaseFieldType from "../DatabaseFieldType";
 import PostDelete from "../events/PostDeleteEvent";
 import PostInsertEvent from "../events/PostInsertEvent";
 import PostLoadEvent from "../events/PostLoadEvent";
@@ -21,6 +22,11 @@ const VERSION = 1;
  * Browser IndexedDB database plugin.
  */
 export default class IndexedDB implements IDatabaseManager {
+    /**
+     * The default primary key when not defined.
+     */
+    private readonly DEFAULT_PK = 'uuid';
+
     /**
      * Opened database.
      */
@@ -48,17 +54,6 @@ export default class IndexedDB implements IDatabaseManager {
      * @param name Database name.
      */
     constructor(public ctx: Context, public name: string, private debug = false, public version = VERSION) { }
-
-    /**
-     * Check if the plugin is initialized.
-     * 
-     * @param fn The calling function.
-     * 
-     * @throws The plugin is not intialized. 
-     */
-    private _initialized(fn: string): void {
-        // While nothing is to do for initialization; do nothing.
-    }
 
     /**
      * Database open request error.
@@ -127,6 +122,29 @@ export default class IndexedDB implements IDatabaseManager {
 
         tables.forEach(table => table.events?.dispatchEvent(new PostSchemaUpdateEvent(this)));
         return Promise.resolve();
+    }
+
+    /**
+     * Parse the loaded document to fix the fields types.
+     * 
+     * @param document The document. 
+     * @param table The table the document is from.
+     * 
+     * @return The document.
+     */
+    private _parseDocument(document: any, table: IDatabaseTable): any {
+        for (const field of table.fields) if (document[field.name] !== undefined) {
+            switch (field.type) {
+                case DatabaseFieldType.Integer:
+                    document[field.name] = parseInt(document[field.name]);
+                    break;
+                case DatabaseFieldType.Double:
+                    document[field.name] = parseFloat(document[field.name]);
+                    break;
+            }
+        }
+
+        return document;
     }
 
     /**
@@ -224,8 +242,9 @@ export default class IndexedDB implements IDatabaseManager {
                     const cursor = request.result;
 
                     if (cursor) {
-                        result.push(cursor.value);
-                        table.events?.dispatchEvent(new PostLoadEvent(this, cursor.value));
+                        const document = this._parseDocument(cursor.value, table);
+                        result.push(document);
+                        table.events?.dispatchEvent(new PostLoadEvent(this, document));
                         cursor.continue();
                     } else {
                         resolve(result);
@@ -238,8 +257,9 @@ export default class IndexedDB implements IDatabaseManager {
 
                 request.onerror = reject;
                 request.onsuccess = (evt) => {
-                    table.events?.dispatchEvent(new PostLoadEvent(this, request.result));
-                    resolve(request.result);
+                    const document = this._parseDocument(request.result, table);
+                    table.events?.dispatchEvent(new PostLoadEvent(this, document));
+                    resolve(document);
                 }
             }
         });
@@ -267,7 +287,10 @@ export default class IndexedDB implements IDatabaseManager {
             const transaction = db.transaction([_table], 'readwrite');
 
             // Initialize transaction error handling.
-            transaction.onerror = reject;
+            transaction.onerror = (ev) => {
+                this.debug && console.error('[IndexedDB] Insert transaction init error.', (<any> ev).explicitOriginalTarget.error);
+                reject(ev);
+            }
 
             this._setGeneratedValues(obj, table);
 
@@ -275,7 +298,10 @@ export default class IndexedDB implements IDatabaseManager {
             const store = transaction.objectStore(_table);
             const request = store.add(obj);
 
-            request.onerror = reject;
+            request.onerror = (ev) => {
+                this.debug && console.error('[IndexedDB] Insert request error.', (<any> ev).explicitOriginalTarget.error);
+                reject(ev);
+            };
             request.onsuccess = async () => {
                 if (table.events) {
                     table.events.dispatchEvent(new PostInsertEvent(this, obj));
@@ -319,8 +345,6 @@ export default class IndexedDB implements IDatabaseManager {
 
         tables.forEach(table => table.events?.dispatchEvent(new PreOpenEvent(this)));
 
-        this._initialized('open');
-
         if (process.browser && window) {
             const request = window.indexedDB.open(this.name, this.version);
 
@@ -340,7 +364,7 @@ export default class IndexedDB implements IDatabaseManager {
         return Promise.reject();
     }
 
-    async update(_table: string, obj: any): Promise<any> {
+    update(_table: string, obj: any): Promise<any> {
         if (!this._db) {
             return Promise.reject('Database not opened.');
         }
@@ -354,29 +378,38 @@ export default class IndexedDB implements IDatabaseManager {
 
         this.debug && console.log('[IndexedDB] Update in store %s :', table.name, obj);
 
-        const previous = table.primary_key && await this.get(table.name, obj[table.primary_key]);
-        table.events?.dispatchEvent(new PreUpdateEvent(this, obj, previous));
-
         return new Promise((resolve, reject) => {
-            const transaction = db.transaction([_table], 'readwrite');
+            this.get(table.name, obj[table.primary_key ?? this.DEFAULT_PK]).then((previous: any) => {
+                table.events?.dispatchEvent(new PreUpdateEvent(this, obj, previous));
 
-            // Initialize transaction error handling.
-            transaction.onerror = reject;
+                const transaction = db.transaction([_table], 'readwrite');
 
-            this._setGeneratedValues(obj, table);
+                // Initialize transaction error handling.
+                transaction.onerror = (ev) => {
+                    this.debug && console.error('[IndexedDB] Update transaction init error.', (<any> ev).explicitOriginalTarget.error);
+                    reject(ev);
+                };
 
-            // Insert in store.
-            const store = transaction.objectStore(_table);
-            const request = store.put(obj);
+                this._setGeneratedValues(obj, table);
 
-            request.onerror = reject;
-            request.onsuccess = async () => {
-                if (table.events) {
-                    table.events.dispatchEvent(new PostUpdateEvent(this, obj, previous));
-                    await table.events.processing;
+                // Insert in store.
+                const store = transaction.objectStore(_table);
+                const request = store.put(obj);
+
+                request.onerror = (ev) => {
+                    this.debug && console.error('[IndexedDB] Update request error.', (<any> ev).explicitOriginalTarget.error);
+                };
+                request.onsuccess = async () => {
+                    if (table.events) {
+                        table.events.dispatchEvent(new PostUpdateEvent(this, obj, previous));
+                        await table.events.processing;
+                    }
+                    resolve(obj);
                 }
-                resolve(obj);
-            }
+            }).catch((reason) => {
+                this.debug && console.error('[IndexedDB] Update get previous version error.', reason);
+                reject(reason);
+            });
         });        
     }
 }

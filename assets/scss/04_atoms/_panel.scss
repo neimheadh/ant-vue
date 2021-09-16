@@ -7,7 +7,15 @@
     width: 90vw;
     transition: all $transition-speed;
 
-    &.focused {
+    &.clickeable {
+        cursor: pointer;
+
+        &:hover:not(.focused) {
+            background: $primary;
+        }
+    }
+
+    &.focused, &.deleted {
         &:not(.unfocusing) {
             left: 0.5vw !important;
             top: $header-height !important;
@@ -16,7 +24,7 @@
         width: 99vw;
         z-index: 40;
 
-        &.unfocusing {
+        &.unfocusing:not(.deleted) {
             width: 90vw;
         }
     }

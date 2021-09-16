@@ -2,9 +2,14 @@
     <div :class="classes">
         <ul v-if="actions.length">
             <template v-for="(action, index) in actions[0]">
-                <li v-if="action.type === ActionType.Edit" :key="`action.${index}`">
+                <li v-if="action.type === ActionType.Cancel" :key="`action.${index}`">
+                    <Button @click="action.callback" class="color-danger" bigger padded round>
+                        <font-awesome-icon icon="times" />
+                    </Button>
+                </li>
+                <li v-else-if="action.type === ActionType.Create" :key="`action.${index}`">
                     <Button @click="action.callback" class="color-primary" bigger padded round>
-                        <font-awesome-icon icon="pencil-alt" />
+                        <font-awesome-icon icon="plus" />
                     </Button>
                 </li>
                 <li v-else-if="action.type === ActionType.Delete" :key="`action.${index}`">
@@ -12,14 +17,19 @@
                         <font-awesome-icon icon="trash" />
                     </Button>
                 </li>
+                <li v-else-if="action.type === ActionType.Edit" :key="`action.${index}`">
+                    <Button @click="action.callback" class="color-primary" bigger padded round>
+                        <font-awesome-icon icon="pencil-alt" />
+                    </Button>
+                </li>
                 <li v-else-if="action.type === ActionType.Validate" :key="`action.${index}`">
                     <Button @click="action.callback" class="color-success" bigger padded round>
                         <font-awesome-icon icon="check" />
                     </Button>
                 </li>
-                <li v-else-if="action.type === ActionType.Cancel" :key="`action.${index}`">
-                    <Button @click="action.callback" class="color-danger" bigger padded round>
-                        <font-awesome-icon icon="times" />
+                <li v-else :key="`action.${index}`">
+                    <Button @click="action.callback" bigger padded round>
+                        <font-awesome-icon icon="cogs" />
                     </Button>
                 </li>
             </template>
@@ -37,6 +47,7 @@ export enum ActionType {
     Default = 0,
 
     Cancel,
+    Create,
     Delete,
     Edit,
     Validate,

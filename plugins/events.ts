@@ -40,7 +40,7 @@ class AppEventTarget implements EventTarget {
         }
 
         const stack: any[] = this.listeners[type];
-        for (let i = 0, l = stack.length; i < 1; i++) {
+        for (let i = 0, l = stack.length; i < l; i++) {
             if (stack[i] === callback) {
                 stack.splice(i, 1);
                 return;

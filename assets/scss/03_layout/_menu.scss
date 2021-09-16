@@ -1,12 +1,20 @@
 .menu {
+    .btn-close {
+        position: absolute;
+        z-index: 100;
+        top: 0;
+        right: 0;
+    }
+
     .btn-open {
         box-sizing: border-box;
         height: $header-height;
-        left: 0;
         position: fixed;
-        top: 0;
         width: $header-height;
         z-index: 11;
+
+        right: 0;
+        top: 0;
 
         .fa-times {
             display: none;
@@ -16,16 +24,18 @@
     .container {
         background: $color5;
         height: 100vh;
-        margin-left: -80vw;
+        padding-top: $header-height;
         position: fixed;
-        left: 0;
         transition: margin $transition-speed;
-        top: 0;
         width: 80vw;
         z-index: 30;
 
+        margin-right: -80vw;
+        right: 0;
+        top: 0;
+
         &.opened {
-            margin-left: 0;
+            margin-right: 0;
         }
 
         .content {

@@ -14,6 +14,7 @@ export default Vue.extend({
             this.value === 0 && classes.push('null');
 
             this.colored && classes.push('colored');
+            this.invertedColor && classes.push('inverted-color');
 
             return classes.join(' ');
         },
@@ -36,6 +37,12 @@ export default Vue.extend({
             type: String,
             default: 'USD',
         },
+        /**
+         * Invert negative/positive color.
+         * 
+         * Ignored if colored modifier off.
+         */
+        invertedColor: Boolean,
         /**
          * The price locale.
          */

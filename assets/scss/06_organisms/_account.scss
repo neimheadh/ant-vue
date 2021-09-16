@@ -1,0 +1,10 @@
+.account-list {
+    .new-account {
+        display: none;
+
+        &.focusing,
+        &.focused {
+            display: block;
+        }
+    }
+}

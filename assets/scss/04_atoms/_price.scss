@@ -1,4 +1,20 @@
 .price {
+    color: $grey-80;
+
+    &.inverted-color {
+        &.negative {
+            color: $green;
+        }
+
+        &.positive {
+            color: $red;
+        }
+    }
+
+    &.negative {
+        color: $red;
+    }
+
     &.positive {
         color: $green;
     }

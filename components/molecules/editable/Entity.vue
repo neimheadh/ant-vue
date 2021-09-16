@@ -6,6 +6,7 @@
             v-on:input="$emit('input', $event.target)"
             :label="label"
         >
+            <Option></Option>
             <Option 
                 v-for="en in list"
                 
