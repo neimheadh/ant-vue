@@ -67,7 +67,7 @@ export default Vue.extend({
          * Action classes.
          */
         classes(): string {
-            const classes = ['actions'];
+            const classes = ['layout--actions'];
 
             return classes.join(' ');
         },

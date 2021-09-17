@@ -1,14 +1,10 @@
 <template>
-    <div class="menu">
+    <div class="layout--menu">
         <div class="container" ref="container">
             <div class="content">
                 <MenuLink to="/" @click="close">{{ $t('Home') }}</MenuLink>
                 <MenuLink to="/account" @click="close">{{ $t('Accounts') }}</MenuLink>
             </div>
-
-            <Button class="btn-close" @click="toggle" bigger clickable primary round inverted>
-                <font-awesome-icon icon="times" />
-            </Button>
         </div>
         <Button class="btn-open" @click="toggle" bigger clickable primary square>
             <font-awesome-icon icon="bars" class="fa-bars" />

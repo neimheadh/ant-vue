@@ -1,3 +1,7 @@
+/**
+ * Color variables.
+ */
+
 $color1: #F95A0E;
 $color2: #A5653D;
 $color3: #69645B;
@@ -191,8 +195,3 @@ $secondary-180: adjust_color($color: $secondary, $lightness: +80%);
 $secondary-185: adjust_color($color: $secondary, $lightness: +85%);
 $secondary-190: adjust_color($color: $secondary, $lightness: +90%);
 $secondary-195: adjust_color($color: $secondary, $lightness: +95%);
-
-:root {
-    --primary-color: #F95A0E;
-    --secondary-color: #A5653D;
-}

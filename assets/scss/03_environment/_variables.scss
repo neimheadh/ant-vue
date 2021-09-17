@@ -1,0 +1,13 @@
+/**
+ * Define CSS variables.
+ */
+
+:root {
+    --color1: #{$color1};
+    --color2: #{$color2};
+    --color3: #{$color3};
+    --color4: #{$color4};
+
+    --primary-color: #{$primary};
+    --secondary-color: #{$secondary};
+}

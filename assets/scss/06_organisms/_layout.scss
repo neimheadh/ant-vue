@@ -1,15 +1,124 @@
-.actions {
-    bottom: $margin-little;
-    position: fixed;
-    right: $margin-little;
-    z-index: 21;
+/**
+ * Stylesheet for layout organisms.
+ * 
+ * @see ~/components/organisms/layout
+ */
 
-    ul {
-        display: flex;
-
-        li {
-            list-style: none;
-            margin-left: $margin-little;
+.layout {
+    /**
+     * LayoutActions organism.
+     * 
+     * @see ~/components/organisms/layout/Actions.vue
+     */
+    &--actions {
+        bottom: $margin-little;
+        position: fixed;
+        right: $margin-little;
+        z-index: 21;
+    
+        ul {
+            display: flex;
+    
+            li {
+                list-style: none;
+                margin-left: $margin-little;
+            }
         }
+    }
+
+    /**
+     * LayoutHeader organism.
+     * 
+     * @see ~/components/organisms/layout/Header.vue
+     */
+    &--header {
+        height: $header-height;
+        margin-bottom: $margin-little;
+    
+        .container {
+            background: $color5;
+            box-sizing: border-box;
+            display: flex;
+            height: $header-height;
+            left: 0;
+            position: fixed;
+            top: 0;
+            width: 100vw;
+            z-index: 10;
+        }
+    }
+
+    /**
+     * LayoutMenu organism.
+     * 
+     * @see ~/components/organisms/layout/Menu.vue
+     */
+    &--menu {
+        .btn-close {
+            position: absolute;
+            z-index: 100;
+            top: 0;
+            right: 0;
+        }
+    
+        .btn-open {
+            box-sizing: border-box;
+            height: $header-height;
+            position: fixed;
+            top: 0;
+            width: $header-height;
+            z-index: 11;
+    
+            @if $layout-menu-orientation = left {
+                left: 0;
+            } @else {
+                right: 0;
+            }
+    
+            .fa-times {
+                display: none;
+            }
+        }
+    
+        .container {
+            background: $color5;
+            height: 100vh;
+            position: fixed;
+            transition: margin $transition-speed;
+            top: 0;
+            width: $layout-menu-width;
+            z-index: 30;
+    
+            .content {
+                height: 100vh;
+            }
+    
+    
+            @if $layout-menu-orientation == left {
+                margin-left: -$layout-menu-width;
+                left: 0;
+    
+                &.opened {
+                    margin-left: 0;
+                }
+            } @else {
+                margin-right: -$layout-menu-width;
+                right: 0;
+    
+                &.opened {
+                    margin-right: 0;
+                }
+            }
+        }
+    }
+
+    /**
+     * LayoutPage organism.
+     *
+     * @see ~/components/organisms/layout/Page.vue
+     */
+    &--page {
+        background: $background;
+        min-height: 100vh;
     }
 }

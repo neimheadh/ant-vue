@@ -1,5 +1,5 @@
 <template>
-    <div class="account-list" ref="container">
+    <div class="account--list" ref="container">
         <AccountPanel v-for="account in accounts" :key="account.uuid" :account="account" ref="panels" />
         <AccountPanel class="new-account" ref="new" @change="add" :focus-time="0" :unfocus-time="0" />
     </div>

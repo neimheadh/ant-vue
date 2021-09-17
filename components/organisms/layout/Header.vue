@@ -2,7 +2,7 @@
     Layout header.
 -->
 <template>
-    <header>
+    <header class="layout--header">
         <div class="container">
             <Button v-if="previous" class="btn-previous" @click="back" bigger clickable primary square>
                 <font-awesome-icon icon="chevron-left" />

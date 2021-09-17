@@ -70,7 +70,7 @@ export default Vue.extend({
          * Get CSS classes.
          */
         classes(): string {
-            const classes = ['account-panel'];
+            const classes = ['account--panel'];
 
             this.error && classes.push('error');
 

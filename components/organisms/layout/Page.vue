@@ -1,6 +1,6 @@
 <template>
-    <div>
-        <LayoutHeader :previous="previous" :title="title" />
+    <div class="layout--page">
+        <LayoutHeader :icon="icon" :previous="previous" :title="title" />
         <slot />
     </div>
 </template>
@@ -9,6 +9,10 @@
 import Vue from 'vue'
 export default Vue.extend({
     props: {
+        /**
+         * Page icon.
+         */
+        icon: String,
         /**
          * Previous page.
          */

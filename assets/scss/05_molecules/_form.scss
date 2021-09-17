@@ -1,4 +1,15 @@
-.form-input, .form-select {
+/**
+ * Stylesheet for form molecules.
+ *
+ * @see ~/components/molecules/form
+ */
+
+/**
+ * FormInput molecule.
+ *
+ * @see ~/components/molecules/form/Input.vue
+ */
+.form-input {
     display: block;
     margin-bottom: $margin-normal;
     position: relative;
@@ -19,4 +30,13 @@
         padding-right: $margin-tiny;
         position: absolute;
     }
+}
+
+/**
+ * FormSelect molecule.
+ *
+ * @see ~/components/molecules/form/Select.vue
+ */
+.form-select {
+    @extend .form-input;
 }
