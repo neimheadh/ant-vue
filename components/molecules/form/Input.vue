@@ -1,5 +1,5 @@
 <template>
-    <Label class="form-input">
+    <label class="form-input">
         <span>{{ label }}</span>
 
         <Input
@@ -12,7 +12,7 @@
             :title="title || label"
             :type="type"
         />
-    </Label>
+    </label>
 </template>
 
 <script lang="ts">

@@ -8,10 +8,11 @@ export default Vue.extend({
     computed: {
         classes(): string {
             const classes = ['price', `locale-${this.locales}`, `currency-${this.currency}`];
+            const value = parseFloat(<string> this.value);
 
-            this.value > 0 && classes.push('positive');
-            this.value < 0 && classes.push('negative');
-            this.value === 0 && classes.push('null');
+            value > 0 && classes.push('positive');
+            value < 0 && classes.push('negative');
+            value === 0 && classes.push('null');
 
             this.colored && classes.push('colored');
             this.invertedColor && classes.push('inverted-color');
@@ -22,7 +23,7 @@ export default Vue.extend({
             return new Intl.NumberFormat(
                 this.locales ?? this.$i18n.localeProperties.iso, 
                 { style: 'currency', currency: this.currency}
-            ).format(this.value);
+            ).format(parseFloat(<string>this.value));
         }
     },
     props: {
@@ -53,7 +54,7 @@ export default Vue.extend({
         /**
          * Price value.
          */
-        value: Number,
+        value: {},
     }
 })
 </script>

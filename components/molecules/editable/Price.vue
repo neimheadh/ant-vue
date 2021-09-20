@@ -22,7 +22,7 @@ export default Vue.extend({
         /**
          * Editing status.
          */
-        editing: { type: Boolean, default: false },
+        editing: { type: Boolean, default: true },
         /**
          * Input label.
          */

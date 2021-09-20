@@ -8,7 +8,7 @@
             :label="label"
         />
         <Title v-else-if="level > 0" ref="name" :level="level">{{ value }}</Title>
-        <template v-else>{{ title }}</template>
+        <template v-else>{{ value }}</template>
     </div>
 </template>
 
@@ -24,7 +24,7 @@ export default Vue.extend({
         /**
          * Editing status.
          */
-        editing: { type: Boolean, default: false },
+        editing: { type: Boolean, default: true },
         /**
          * Input label.
          */

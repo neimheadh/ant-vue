@@ -1,0 +1,16 @@
+/**
+ * Stylesheet for card atom.
+ * 
+ * @see ~/components/atoms/Card.vue
+ */
+.card {
+    // Bordering
+    border-radius: $border-radius-normal;
+
+    // Coloring
+    background: $white;
+
+    // Spacing
+    margin: $margin-little;
+    padding: $margin-normal;
+}

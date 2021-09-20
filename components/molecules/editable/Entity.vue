@@ -17,7 +17,6 @@
         </FormSelect>
         <Title v-else-if="level > 0" ref="name" :level="level">{{ entity[displayField] }}</Title>
         <template v-else>{{ entity[displayField] }}</template>
-
     </div>
 </template>
 
@@ -40,7 +39,7 @@ export default Vue.extend({
         /**
          * Editing status.
          */
-        editing: { type: Boolean, default: false },
+        editing: { type: Boolean, default: true },
         /**
          * Input label.
          */

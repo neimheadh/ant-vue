@@ -1,0 +1,26 @@
+/**
+ * Stylesheet for card molecules.
+ *
+ * @see ~/components/molecules/card
+ */
+
+/**
+ * CardPrice molecule.
+ *
+ * @see ~/components/molecules/card/Price.vue
+ */
+.card-price {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+
+    h3 {
+        width: 100%;
+    }
+
+    .price {
+        display: block;
+        flex-basis: 100%;
+        text-align: right;
+    }
+}

@@ -193,13 +193,19 @@ export default class IndexedDB implements IDatabaseManager {
             const transaction = db.transaction([_table], 'readwrite');
 
             // Initialize transaction error handling.
-            transaction.onerror = reject;
+            transaction.onerror = (ev) => {
+                this.debug && console.error('[IndexedDB] Delete transaction init error.', (<any> ev).explicitOriginalTarget.error);
+                reject(ev);
+            };
 
             // Delete in store.
             const store = transaction.objectStore(_table);
             const request = store.delete(id);
 
-            request.onerror = reject;
+            request.onerror = (ev) => {
+                this.debug && console.error('[IndexedDB] Delete request error.', (<any> ev).explicitOriginalTarget.error);
+                reject(ev);
+            };;
             request.onsuccess = () => {
                 resolve();
                 table.events?.dispatchEvent(new PostDelete(this, deleted));
@@ -223,6 +229,8 @@ export default class IndexedDB implements IDatabaseManager {
         }
         table.events?.dispatchEvent(new PreLoadEvent(this, { id }));
 
+        this.debug && console.log('[IndexedDB] Get element(s)', _table, id);
+
         return new Promise((resolve, reject) => {
             const transaction = db.transaction([table.name]);
             const store = transaction.objectStore(table.name);
@@ -237,7 +245,10 @@ export default class IndexedDB implements IDatabaseManager {
 
                 this.debug && console.log('[IndexedDB] Load rows from storage %s', store.name);
 
-                request.onerror = reject;
+                request.onerror = (ev) => {
+                    this.debug && console.error('[IndexedDB] Get request error.', (<any> ev).explicitOriginalTarget.error);
+                    reject(ev);
+                };;
                 request.onsuccess = (evt: Event) => {
                     const cursor = request.result;
 
@@ -255,7 +266,10 @@ export default class IndexedDB implements IDatabaseManager {
 
                 this.debug && console.log('[IndexedDB] Load row %s from storage %s', id, store.name);
 
-                request.onerror = reject;
+                request.onerror = (ev) => {
+                    this.debug && console.error('[IndexedDB] Get request error.', (<any> ev).explicitOriginalTarget.error);
+                    reject(ev);
+                };;
                 request.onsuccess = (evt) => {
                     const document = this._parseDocument(request.result, table);
                     table.events?.dispatchEvent(new PostLoadEvent(this, document));

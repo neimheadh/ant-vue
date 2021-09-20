@@ -44,6 +44,7 @@ export default class Account implements IDatabaseTable {
     readonly fields: IDatabaseField[] = [
         { name: Account.UUID, generator: new UUIDGenerator() },
         { name: 'name' },
+        { name: 'type' },
         { name: 'balance', type: DatabaseFieldType.Double, default: 0 },
         { name: 'currency', default: 'USD' },
         { name: 'bank', link: { table: Bank.TABLE, field: Bank.UUID } },

@@ -3,9 +3,10 @@
  *
  * Includes files configuring stylesheets environment.
  * It includes files overriding default CSS, or creating 
- * CSS root variables, fonts, ect.
+ * CSS root variables, fonts, common classes, ect.
  */
 
+@import 'common';
 @import 'fonts';
 @import 'reset';
 @import 'variables';

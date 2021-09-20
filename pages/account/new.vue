@@ -1,0 +1,51 @@
+<template>
+    <LayoutPage 
+        :actions="[
+            { action: cancel, color: 'secondary', icon: 'times', title: $t('Cancel') },
+            { action: submit, color: 'success', icon: 'check', title: $t('Validate') }
+        ]"
+        :title="$t('New account')"
+    >
+        <AccountForm :account="account" />
+    </LayoutPage>
+</template>
+
+<script lang="ts">
+import Vue from 'vue';
+
+import Account from '~/database/tables/Account';
+
+export default Vue.extend({
+    methods: {
+        /**
+         * Go back without saving.
+         */
+        cancel(evt: Event): void {
+            evt.preventDefault();
+            evt.stopPropagation();
+
+            this.$router.back();
+        },
+
+        /**
+         * Save account and go back.
+         */
+        submit(evt: Event): void {
+            evt.preventDefault();
+            evt.stopPropagation();
+        
+            this.$db.insert(Account.TABLE, this.account)
+                .then(() => this.$router.back());
+            
+        }
+    },
+
+    data() {
+        return {
+            account: <any> {
+                balance: 0,
+            },
+        }
+    },
+})
+</script>

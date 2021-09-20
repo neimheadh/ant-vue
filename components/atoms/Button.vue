@@ -1,5 +1,14 @@
 <template>
-  <button ref="button" :class="classes().join(' ')" :type="type" @click="$emit('click', $event)"><slot /></button>
+  <button 
+    ref="button" 
+    
+    :class="classes().join(' ')" 
+    :type="type" 
+    
+    @click="$emit('click', $event)"
+  >
+    <slot />
+  </button>
 </template>
 
 <script lang="ts">

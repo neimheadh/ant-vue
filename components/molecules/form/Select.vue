@@ -1,5 +1,5 @@
 <template>
-    <Label class="form-select">
+    <label class="form-select">
         <span>{{ label }}</span>
 
         <Select
@@ -8,7 +8,7 @@
 
             ref="input"
         ><slot /></Select>
-    </Label>
+    </label>
 </template>
 
 <script lang="ts">

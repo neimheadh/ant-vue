@@ -1,25 +1,31 @@
 <template>
-    <div class="title">
-        <h1 v-if="level === 1"><slot /></h1>
-        <h2 v-else-if="level === 2"><slot /></h2>
-        <h3 v-else-if="level === 3"><slot /></h3>
-        <h4 v-else-if="level === 4"><slot /></h4>
-        <slot v-else />
-    </div>
+    <h1 v-if="_level === 1"><slot /></h1>
+    <h2 v-else-if="_level === 2"><slot /></h2>
+    <h3 v-else-if="_level === 3"><slot /></h3>
+    <h4 v-else-if="_level === 4"><slot /></h4>
+    <h5 v-else><slot /></h5>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 
 export default Vue.extend({
+    computed: {
+        /**
+         * Title level -- parsed number.
+         */
+        _level(): number {
+            return parseInt(`${this.level}`);
+        }
+    },
+
     props: {
         /**
          * Title H level.
          */
         level: {
-            type: [Number],
-            default: 0,
+            type: [Number, String],
         },
-    }
+    },
 })
 </script>

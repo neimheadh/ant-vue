@@ -6,27 +6,6 @@
 
 .layout {
     /**
-     * LayoutActions organism.
-     * 
-     * @see ~/components/organisms/layout/Actions.vue
-     */
-    &--actions {
-        bottom: $margin-little;
-        position: fixed;
-        right: $margin-little;
-        z-index: 21;
-    
-        ul {
-            display: flex;
-    
-            li {
-                list-style: none;
-                margin-left: $margin-little;
-            }
-        }
-    }
-
-    /**
      * LayoutHeader organism.
      * 
      * @see ~/components/organisms/layout/Header.vue
@@ -120,5 +99,19 @@
     &--page {
         background: $background;
         min-height: 100vh;
+
+        &--actions {
+            bottom: $margin-little;
+            display: flex;
+            list-style: none;
+            margin:0;
+            padding: 0;
+            position: fixed;
+            right: $margin-little;
+
+            li {
+                margin-left: $margin-little;
+            }
+        }
     }
 }
