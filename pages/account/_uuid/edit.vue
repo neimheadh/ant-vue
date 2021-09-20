@@ -35,8 +35,10 @@ export default Vue.extend({
             evt.preventDefault();
             evt.stopPropagation();
 
-            this.$db.update(Account.TABLE, this.account)
-                .then(() => this.$router.back());
+            if((<any> this.$refs.form).checkValidity()) {
+                this.$db.update(Account.TABLE, this.account)
+                    .then(() => this.$router.back());
+            }
         },
 
         /**

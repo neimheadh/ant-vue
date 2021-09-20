@@ -3,9 +3,14 @@
         <FormInput
             v-if="editing"
             v-bind:value="value"
-            v-on:input="$emit('input', $event)"
+            
             ref="input"
+
             :label="label"
+            :required="required"
+
+            @error="$emit('error', $event)"
+            @input="$emit('input', $event)"
         />
         <Title v-else-if="level > 0" ref="name" :level="level">{{ value }}</Title>
         <template v-else>{{ value }}</template>
@@ -16,8 +21,17 @@
 import Vue from 'vue'
 export default Vue.extend({
     methods: {
+        /**
+         * Focus the text input.
+         */
         focus(): void {
             (<any>this.$refs.input).focus();
+        },
+        /**
+         * Check if the form is valid.
+         */
+        reportValidity(): boolean {
+            return this.$refs.input && (<any> this.$refs.input).reportValidity();
         },
     },
     props: {
@@ -33,6 +47,10 @@ export default Vue.extend({
          * Title level.
          */
         level: { type: Number, default: 0 },
+        /**
+         * Input required status.
+         */
+        required: Boolean,
         /**
          * Input value.
          */

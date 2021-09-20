@@ -3,8 +3,11 @@
         <FormSelect
             v-if="editing"
             v-bind:value="value"
-            v-on:input="$emit('input', $event.target)"
+
             :label="label"
+
+            @error="$emit('error', $event)"
+            @input="$emit('input', $event)"
         >
             <Option></Option>
             <Option 
@@ -31,6 +34,14 @@ export default Vue.extend({
         this.entity = await this.$db.get(this.table, this.value);
         this.list = await this.$db.get(this.table);
     },
+    methods: {
+        /**
+         * Check if the form is valid.
+         */
+        reportValidity(): boolean {
+            return this.$refs.input && (<any> this.$refs.input).reportValidity();
+        },
+    },
     props: {
         /**
          * Displayed field name.
@@ -48,6 +59,10 @@ export default Vue.extend({
          * Title level.
          */
         level: { type: Number, default: 0 },
+        /**
+         * Input required status.
+         */
+        required: Boolean,
         /**
          * Entity table.
          */

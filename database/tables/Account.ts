@@ -23,14 +23,6 @@ export default class Account implements IDatabaseTable {
     /**
      * {@inheritdoc}
      */
-    readonly default_content = [
-        { uuid: '64ce919a-3c29-4568-a8dd-0a3ecd4d1acd', name: 'Main account', currency: 'EUR', bank: 'a3dd1137-c794-4efd-b0f6-e971994236ac' },
-        { uuid: '1ccf2f29-7a3f-4bf5-9d4f-a36f19d28759', name: 'Save account', currency: 'EUR', bank: 'a3dd1137-c794-4efd-b0f6-e971994236ac' },
-    ];
-
-    /**
-     * {@inheritdoc}
-     */
     readonly default_sort = 'creation_date';
 
     /**

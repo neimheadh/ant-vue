@@ -1,7 +1,5 @@
 <template>
   <input
-    ref="input"
-
     :type="type" 
     :placeholder="placeholder"
     :step="type === InputType.number && step"
@@ -54,14 +52,21 @@ export default Vue.extend({
      * Focus the input element.
      */
     focus(): void {
-        const input = <HTMLInputElement> this.$refs.input;
+        const input = <HTMLInputElement> this.$el;
         input.focus();
+    },
+
+    /**
+     * Check if the form is valid.
+     */
+    reportValidity(): boolean {
+        return (<HTMLInputElement> this.$el).reportValidity();
     },
     /**
      * Select the input content.
      */
     select(): void {
-        const input = <HTMLInputElement> this.$refs.input;
+        const input = <HTMLInputElement> this.$el;
         input.select();
     },
 },

@@ -6,7 +6,7 @@
         ]"
         :title="$t('New account')"
     >
-        <AccountForm :account="account" />
+        <AccountForm ref="form" :account="account" />
     </LayoutPage>
 </template>
 
@@ -33,10 +33,11 @@ export default Vue.extend({
         submit(evt: Event): void {
             evt.preventDefault();
             evt.stopPropagation();
-        
-            this.$db.insert(Account.TABLE, this.account)
-                .then(() => this.$router.back());
-            
+
+            if((<any> this.$refs.form).checkValidity()) {
+                this.$db.insert(Account.TABLE, this.account)
+                    .then(() => this.$router.back());
+            }        
         }
     },
 
