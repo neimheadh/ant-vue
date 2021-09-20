@@ -36,7 +36,7 @@ export default Vue.extend({
 
             if((<any> this.$refs.form).checkValidity()) {
                 this.$db.insert(Account.TABLE, this.account)
-                    .then(() => this.$router.back());
+                    .then(() => this.$router.replace('/account'));
             }        
         }
     },

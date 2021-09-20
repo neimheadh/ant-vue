@@ -37,7 +37,7 @@ export default Vue.extend({
 
             if((<any> this.$refs.form).checkValidity()) {
                 this.$db.update(Account.TABLE, this.account)
-                    .then(() => this.$router.back());
+                    .then(() => this.$router.push('/account'));
             }
         },
 
@@ -50,7 +50,7 @@ export default Vue.extend({
 
             if (confirm(this.$t('Are you sure?').toString())) {
                 this.$db.delete(Account.TABLE, this.account.uuid)
-                    .then(() => this.$router.back());
+                    .then(() => this.$router.replace('/account'));
             }
         },
     },
