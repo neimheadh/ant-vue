@@ -4,16 +4,16 @@
             { action: cancel, color: 'secondary', icon: 'times', title: $t('Cancel') },
             { action: submit, color: 'success', icon: 'check', title: $t('Validate') }
         ]"
-        :title="$t('New account')"
+        :title="$t('New bank')"
     >
-        <AccountForm ref="form" :account="account" />
+        <BankForm ref="form" :bank="bank" />
     </LayoutPage>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 
-import Account from '~/database/tables/Account';
+import Bank from '~/database/tables/Bank';
 
 export default Vue.extend({
     methods: {
@@ -24,26 +24,26 @@ export default Vue.extend({
             evt.preventDefault();
             evt.stopPropagation();
 
-            this.$router.push('/account');
+            this.$router.push('/bank');
         },
 
         /**
-         * Save account and go back.
+         * Save bank and go back.
          */
         submit(evt: Event): void {
             evt.preventDefault();
             evt.stopPropagation();
 
             if((<any> this.$refs.form).checkValidity()) {
-                this.$db.insert(Account.TABLE, this.account)
-                    .then(() => this.$router.replace('/account'));
+                this.$db.insert(Bank.TABLE, this.bank)
+                    .then(() => this.$router.replace('/bank'));
             }        
         }
     },
 
     data() {
         return {
-            account: <any> {
+            bank: <any> {
                 balance: 0,
             },
         }

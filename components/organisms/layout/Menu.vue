@@ -4,6 +4,7 @@
             <div class="content">
                 <MenuLink to="/" @click="close">{{ $t('Home') }}</MenuLink>
                 <MenuLink to="/account" @click="close">{{ $t('Accounts') }}</MenuLink>
+                <MenuLink to="/bank" @click="close">{{ $t('Banks') }}</MenuLink>
             </div>
         </div>
         <Button class="btn-open" @click="toggle" bigger clickable primary square>

@@ -42,17 +42,13 @@ import Bank from '~/database/tables/Bank';
 
 export default Vue.extend({
     methods: {
-        log(...args: any): void {
-            console.log(args);
-        },
-
         /**
          * Check form validity.
          */
         checkValidity(): boolean {
             const form = <any> this.$refs.form;
 
-            return form.checkValidity();
+            return form && form.checkValidity();
         }
     },
 
