@@ -6,7 +6,7 @@
         ]"
         :title="$t('New account')"
     >
-        <AccountForm ref="form" :account="account" />
+        <AccountForm ref="form" :account="account" @submit="submit" />
     </LayoutPage>
 </template>
 

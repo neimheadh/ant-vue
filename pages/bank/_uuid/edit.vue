@@ -7,7 +7,7 @@
         ]"
         :title="$t('Edit bank', bank)"
     >
-        <BankForm v-if="bank" ref="form" :bank="bank" />
+        <BankForm v-if="bank" ref="form" :bank="bank" @submit="submit" />
         <Loading v-else />
     </LayoutPage>
 </template>

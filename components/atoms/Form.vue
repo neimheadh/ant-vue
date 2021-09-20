@@ -1,5 +1,5 @@
 <template>
-    <form>
+    <form @submit="$emit('submit', $event)">
         <slot />
     </form>
 </template>
@@ -34,7 +34,7 @@ export default Vue.extend({
          */
         reportValidity(): boolean {
             return this.checkValidity();
-        }
+        },
     }
 })
 </script>

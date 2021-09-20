@@ -1,6 +1,6 @@
 <template>
     <Card class="account--form">
-        <Form ref="form">
+        <Form ref="form" @submit="$emit('submit', $event)">
             <EditableText
                 v-model="$data._account.name" 
                 
@@ -31,16 +31,20 @@
                 
                 :label="$t('Account balance')" 
             />
+
+            <input type="submit" class="hidden" />
         </Form>
     </Card>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
+import Input from '~/components/atoms/Input.vue';
 
 import Bank from '~/database/tables/Bank';
 
 export default Vue.extend({
+  components: { Input },
     methods: {
         /**
          * Check form validity.
@@ -49,7 +53,12 @@ export default Vue.extend({
             const form = <any> this.$refs.form;
 
             return form && form.checkValidity();
-        }
+        },
+
+        submit(evt: Event): void {
+            console.log('submit', evt);
+            evt.preventDefault();
+        },
     },
 
     props: {

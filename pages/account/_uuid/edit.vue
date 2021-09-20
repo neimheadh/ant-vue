@@ -7,7 +7,7 @@
         ]"
         :title="$t('Edit account', account)"
     >
-        <AccountForm v-if="account" ref="form" :account="account" />
+        <AccountForm v-if="account" ref="form" :account="account" @submit="submit" />
         <Loading v-else />
     </LayoutPage>
 </template>

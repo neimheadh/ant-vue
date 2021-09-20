@@ -1,6 +1,6 @@
 <template>
     <Card class="bank--form">
-        <Form ref="form">
+        <Form ref="form" @submit="$emit('submit', $event)">
             <EditableText
                 v-model="$data._bank.name" 
                 
@@ -8,6 +8,8 @@
 
                 required
             />
+
+            <input type="submit" class="hidden" />
         </Form>
     </Card>
 </template>
@@ -24,7 +26,7 @@ export default Vue.extend({
          */
         checkValidity(): boolean {
             return this._form.checkValidity();
-        }
+        },
     },
 
     props: {

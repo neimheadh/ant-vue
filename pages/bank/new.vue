@@ -6,7 +6,7 @@
         ]"
         :title="$t('New bank')"
     >
-        <BankForm ref="form" :bank="bank" />
+        <BankForm ref="form" :bank="bank" @submit="submit" />
     </LayoutPage>
 </template>
 
