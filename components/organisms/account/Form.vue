@@ -3,6 +3,8 @@
         <Form ref="form" @submit="$emit('submit', $event)">
             <EditableText
                 v-model="$data._account.name" 
+
+                ref="focus"
                 
                 :label="$t('Account name')" 
 
@@ -80,6 +82,8 @@ export default Vue.extend({
         if (this.account !== undefined) {
             this.$data._account = this.account;
         }
+
+        (<any> this.$refs.focus).focus()
     },
 })
 </script>
