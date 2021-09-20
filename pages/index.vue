@@ -1,5 +1,6 @@
 <template>
   <LayoutPage :title="$t('Homepage')">
+    <Title level="2">{{ $t('My accounts') }}</Title>
     <AccountList @click="clickAccount($event)"/>
   </LayoutPage>
 </template>
