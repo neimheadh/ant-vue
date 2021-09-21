@@ -10,15 +10,16 @@ import CurrentDateGenerator from "../valueGenerators/CurrentDateGenerator";
  * Bank accounts table.
  */
 export default class Account implements IDatabaseTable {
-    /**
-     * UUID field.
-     */
-    static UUID = 'uuid';
 
     /**
      * Account table name.
      */
-    static TABLE = 'account';
+     static TABLE = 'account';
+
+    /**
+     * UUID field.
+     */
+    static UUID = 'uuid';
 
     /**
      * {@inheritdoc}
@@ -61,5 +62,5 @@ export default class Account implements IDatabaseTable {
     /**
      * {@inheritdoc}
      */
-    readonly primary_key = 'uuid';
+    readonly primary_key = Account.UUID;
 }

@@ -1,45 +1,19 @@
 <template>
-  <LayoutPage 
-    :actions="[
-        { action: create, color: 'primary', icon: 'plus', title: $t('Create bank') },
-    ]"
-    :title="$t('Banks')"
-  >
-    <BankList @click="click($event)"/>
-  </LayoutPage>
+  <PageNameEntityList
+    class="bank--list"
+    :table="Bank.TABLE"
+    :title="$t('Edit banks')"
+  />
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
+import Vue from 'vue';
+
+import Bank from '~/database/tables/Bank';
+
 export default Vue.extend({
-  methods: {
-    /**
-     * Handle bank click.
-     * 
-     * @param evt The click event.
-     */
-    click(evt: CustomEvent): void {
-      evt.preventDefault();
-      evt.stopPropagation();
-
-      this.$router.push({
-        path: `/bank/${evt.detail.uuid}/edit`,
-      });
-    },
-
-    /**
-     * Bank creation action.
-     * 
-     * @param evt The action click event.
-     */
-    create(evt: Event): void {
-        evt.preventDefault();
-        evt.stopPropagation();
-
-        this.$router.push({
-            path: '/bank/new',
-        })
-    }
-  }
+  data: () => ({
+    Bank,
+  }),
 })
 </script>

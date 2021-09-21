@@ -13,10 +13,11 @@ import PreLoadEvent from "../events/PreLoadEvent";
 import PreOpenEvent from "../events/PreOpenEvent";
 import PreSchemaUpdateEvent from "../events/PreSchemaUpdateEvent";
 import PreUpdateEvent from "../events/PreUpdateEvent";
+import IDatabaseIndex from "../IDatabaseIndex";
 import IDatabaseManager from "../IDatabaseManager";
 import IDatabaseTable from "../IDatabaseTable";
 
-const VERSION = 1;
+const VERSION = 3;
 
 /**
  * Browser IndexedDB database plugin.
@@ -110,7 +111,8 @@ export default class IndexedDB implements IDatabaseManager {
 
             this.debug && console.log('[IndexedDB] Initialize store %s', table.name);
 
-            for (const index of table.indexes) {
+            for (const _index of table.indexes) {
+                const index = <IDatabaseIndex> _index;
                 const name = index.name ?? index.field;
 
                 if (store) {

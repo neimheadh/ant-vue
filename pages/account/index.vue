@@ -3,7 +3,7 @@
     :actions="[
         { action: create, color: 'primary', icon: 'plus', title: $t('Create account') },
     ]"
-    :title="$t('Accounts')"
+    :title="$t('Edit accounts')"
   >
     <AccountList @click="click($event)"/>
   </LayoutPage>
