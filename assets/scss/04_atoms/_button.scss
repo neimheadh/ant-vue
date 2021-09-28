@@ -117,4 +117,8 @@ button {
         text-align: center;
         width: 1em;
     }
+
+    &.transparent {
+        background: transparent !important;
+    }
 }

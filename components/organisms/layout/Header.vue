@@ -4,12 +4,7 @@
 <template>
     <header class="layout--header">
         <div class="container">
-            <Button v-if="previous" class="btn-previous" @click="back" bigger clickable primary square>
-                <font-awesome-icon icon="chevron-left" />
-            </Button>
-            <Button v-else class="btn-previous" @click="home" bigger clickable primary square>
-                <font-awesome-icon icon="home" />
-            </Button>
+            <MenuButton />
             <Title v-if="title" :level="1">{{ title }}</Title>
         </div>
     </header>

@@ -2,34 +2,37 @@
     <Card class="account--form">
         <Form ref="form" @submit="$emit('submit', $event)">
             <EditableText
-                v-model="$data._account.name" 
+                v-model="$data._transaction.label" 
 
                 ref="focus"
                 
-                :label="$t('Account name')" 
+                :label="$t('Transaction name')" 
 
                 required
             />
             
-            <EditableText   
-                v-model="$data._account.type" 
-                
-                :label="$t('Account type')" 
-            />
-            
             <EditableEntity 
-                v-model="$data._account.bank" 
+                v-model="$data._transaction.account" 
                 
                 display-field="name" 
                 
-                :label="$t('Account bank')" 
-                :table="Bank.TABLE" 
+                :label="$t('Transaction account')" 
+                :table="Account.TABLE"
+            />
+
+            <EditableEntity
+                v-model="$data._transaction['third-party']"
+
+                display-field="name"
+
+                :label="$t('Transaction third party')"
+                :table="ThirdParty.TABLE"
             />
             
             <EditablePrice
-                v-model="$data._account.balance" 
+                v-model="$data._transaction.balance" 
                 
-                :label="$t('Account balance')" 
+                :label="$t('Transaction balance')" 
             />
 
             <input type="submit" class="hidden" />
@@ -41,7 +44,8 @@
 import Vue from 'vue';
 import Input from '~/components/atoms/Input.vue';
 
-import Bank from '~/database/tables/Bank';
+import Account from '~/database/tables/Account';
+import ThirdParty from '~/database/tables/ThirdParty';
 
 export default Vue.extend({
   components: { Input },
@@ -65,20 +69,21 @@ export default Vue.extend({
         /**
          * The account.
          */
-        account: Object,
+        transaction: Object,
     },
 
     data() {
         return {
-            Bank,
+            Account,
+            ThirdParty,
 
-            _account: <any> {},
+            _transaction: <any> {},
         };
     },
 
     mounted() {
-        if (this.account !== undefined) {
-            this.$data._account = this.account;
+        if (this.transaction !== undefined) {
+            this.$data._transaction = this.transaction;
         }
 
         (<any> this.$refs.focus).focus()

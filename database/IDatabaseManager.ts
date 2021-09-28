@@ -48,7 +48,15 @@ export default interface IDatabaseManager {
     /**
      * Initialize database data.
      */
-    init(): Promise<void>
+    init(): Promise<void>;
+
+    /**
+     * Search in database.
+     * 
+     * @param table The table name.
+     * @param criterias The search criteria.
+     */
+    search(table: string, criterias: any): Promise<any[]>;
 
     /**
      * Open database.

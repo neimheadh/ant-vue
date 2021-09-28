@@ -30,6 +30,7 @@ export default Vue.extend({
       this.primary && classList.push('primary');
       this.round && classList.push('round');
       this.rounded && classList.push('rounded');
+      this.transparent && classList.push('transparent');
       this.secondary && classList.push('secondary');
       this.square && classList.push('square');
 
@@ -86,6 +87,11 @@ export default Vue.extend({
      * Square modifier.
      */
     square: Boolean,
+
+    /**
+     * Makes the button background transparent.
+     */
+    transparent: Boolean,
 
     /**
      * Button type.

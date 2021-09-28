@@ -1,0 +1,42 @@
+/**
+ * Stylesheet for page molecules.
+ *
+ * @see ~/components/molecules/Page
+ */
+
+/**
+ * PageBanner molecule.
+ *
+ * @see ~/components/molecules/Page/Banner.vue
+ */
+.page-banner {
+    background: $primary;
+    color: $primary-content-color;
+    margin: -($header-height + $margin-little) 0 0 0;
+    padding: 0 0 $margin-normal 0;
+    position: relative;
+    text-align: center;
+    z-index: 11;
+    
+    h2 {
+        background: transparent;
+        color: $white;
+        line-height: $header-height;
+        margin: 0;
+    }
+
+    h3 {
+        color: $white;
+        font-size: .8em;
+    }
+
+    .menu-button {
+        left: 0;
+        top: 0;
+        position: absolute;
+    }
+
+    .price {
+        font-weight: bold;
+    }
+}

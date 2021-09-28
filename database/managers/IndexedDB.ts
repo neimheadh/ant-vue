@@ -251,7 +251,7 @@ export default class IndexedDB implements IDatabaseManager {
                     this.debug && console.error('[IndexedDB] Get request error.', (<any> ev).explicitOriginalTarget.error);
                     reject(ev);
                 };;
-                request.onsuccess = (evt: Event) => {
+                request.onsuccess = () => {
                     const cursor = request.result;
 
                     if (cursor) {
@@ -272,7 +272,7 @@ export default class IndexedDB implements IDatabaseManager {
                     this.debug && console.error('[IndexedDB] Get request error.', (<any> ev).explicitOriginalTarget.error);
                     reject(ev);
                 };;
-                request.onsuccess = (evt) => {
+                request.onsuccess = () => {
                     const document = this._parseDocument(request.result, table);
                     table.events?.dispatchEvent(new PostLoadEvent(this, document));
                     resolve(document);
@@ -356,6 +356,89 @@ export default class IndexedDB implements IDatabaseManager {
     /**
      * {@inheritdoc}
      */
+    search(_table: string, criteria: any): Promise<any[]> {
+        if (!this._db) {
+            return Promise.reject('Database not opened.');
+        }
+
+        const db = this._db;
+        const table = getTable(_table);
+
+        if (!table) {
+            return Promise.reject(`Table "${_table}" doesn't exists.`);
+        }
+
+        this.debug && console.log('[IndexedDB] Search in table %s with criteria', table.name, criteria);
+
+        return new Promise((resolve, reject) => {
+            const transaction = db.transaction([table.name]);
+            const store = transaction.objectStore(table.name);
+            const attrs = Object.keys(criteria);
+            const result = <any[]> [];
+            let index: IDatabaseIndex | undefined;
+
+            transaction.onerror = ev => {
+                this.debug && console.error('[IndexedDB] Search transaction error.', (<any> ev).explicitOriginalTarget.error);
+                reject(ev);
+            }
+
+            if (attrs.length === 1 && (index = table.indexes.find(index => index.field === attrs[0]))) {
+                const request = store.index(index.field).openCursor();
+
+                request.onerror = ev => {
+                    this.debug && console.error('[IndexedDB] Search by index request error.', (<any> ev).explicitOriginalTarget.error);
+                    reject(ev);
+                };
+                request.onsuccess = () => {
+                    const cursor = request.result;
+
+                    if (cursor) {
+                        const document = this._parseDocument(cursor.value, table);
+                        table.events?.dispatchEvent(new PostLoadEvent(this, document));
+                        result.push(document);
+                        cursor.continue();
+                    } else {
+                        resolve(result);
+                    }
+                }
+            } else {
+                const request = store.openCursor();
+
+                request.onerror = ev => {
+                    this.debug && console.error('[IndexedDB] Search request error.', (<any> ev).explicitOriginalTarget.error);
+                    reject(ev);
+                };
+                request.onsuccess = () => {
+                    const cursor = request.result;
+
+                    if (cursor) {
+                        const keys = Object.keys(cursor);
+                        let valid = true;
+                        
+                        for (const attr of attrs) {
+                            if (valid && cursor.value[attr] != criteria[attr]) {
+                                valid = false;
+                            }
+                        }
+
+                        if (valid) {
+                            const document = this._parseDocument(cursor.value, table);
+                            table.events?.dispatchEvent(new PostLoadEvent(this, document));
+                            result.push(document);
+                        }
+
+                        cursor.continue();
+                    } else {
+                        resolve(result);
+                    }
+                }
+            }
+        });
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     async open(): Promise<void> {
         const tables: IDatabaseTable[] = Tables;
 
@@ -380,6 +463,9 @@ export default class IndexedDB implements IDatabaseManager {
         return Promise.reject();
     }
 
+    /**
+     * {@inheritdoc}
+     */
     update(_table: string, obj: any): Promise<any> {
         if (!this._db) {
             return Promise.reject('Database not opened.');

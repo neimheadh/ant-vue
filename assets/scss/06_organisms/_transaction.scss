@@ -1,0 +1,64 @@
+/**
+ * Stylesheet for transaction organisms.
+ *
+ * @see ~/components/organisms/transaction
+ */
+
+.transaction {
+    /**
+     * Transaction list organism.
+     *
+     * @see ~/components/organisms/transaction/List.vue
+     */
+    &-list {
+
+        fieldset {
+            border-bottom: 0 none;
+            border-color: $primary;
+            border-left: 0 none;
+            border-right: 0 none;
+            border-width: 1px;
+            width: 100%;
+        }
+
+        legend {
+            color: $primary;
+            font-size: .8em;
+            font-weight: bold;
+            margin: 0;
+            padding: 0 1em 0 .2em;
+        }
+
+        &--element {
+            display: flex;
+            justify-content: space-between;
+            padding-bottom: $margin-normal;
+
+            h4 {
+                margin: 0;
+            }
+
+            h5 {
+                margin: 0;
+            }
+
+            &--icon {
+                background: $primary;
+                border-radius: 100%;
+                color: $primary-content-color;
+                line-height: $box-normal;
+                margin-right: $margin-little;
+                text-align: center;
+                width: $box-normal;
+            }
+
+            &--info {
+                flex-grow: 1;
+            }
+
+            &--price {
+                text-align: right;
+            }
+        }
+    }
+}

@@ -47,7 +47,7 @@ export default class Transaction implements IDatabaseTable {
         { name: 'record_date', type: DatabaseFieldType.Datetime },
         { name: 'account', link: { table: Account.TABLE, field: Account.UUID } },
         { name: 'label' },
-        { name: 'balance', type: DatabaseFieldType.Double },
+        { name: 'balance', type: DatabaseFieldType.Double, default: 0 },
     ];
 
     /**

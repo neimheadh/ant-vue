@@ -4,7 +4,7 @@
         v-else
         
         :entity="bank"
-        :name="$t('Third party')"
+        :name="$t('Bank')"
         :table="Bank.TABLE"
     />
 </template>

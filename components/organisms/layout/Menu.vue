@@ -8,9 +8,6 @@
                 <MenuLink to="/third-party" @click="close">{{ $t('Third parties')}}</MenuLink>
             </div>
         </div>
-        <Button class="btn-open" @click="toggle" bigger clickable primary square>
-            <font-awesome-icon icon="bars" class="fa-bars" />
-        </Button>
     </div>
 </template>
 
@@ -60,6 +57,10 @@ export default Vue.extend({
 
     mounted() {
         this.$events.addEventListener('filler.closed', this.close);
+
+        this.$events.addEventListener('menu.close', this.close);
+        this.$events.addEventListener('menu.open', this.open);
+        this.$events.addEventListener('menu.toggle', this.toggle);
     },
 })
 </script>
